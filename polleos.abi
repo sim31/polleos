@@ -1,0 +1,48 @@
+{
+  "types": [],
+  "structs": [{
+      "name": "option",
+      "base": "",
+      "fields": {
+        "name": "string"
+      }
+    },{
+      "name": "multi_opt_poll_msg",
+      "base": "",
+      "fields": {
+        "question": "string",
+        "options": "option[]"
+      }
+    },{
+      "name": "option_result",
+      "base": "option",
+      "fields": {
+        "votes": "uint64"
+      }
+    },{
+      "name": "multi_opt_poll",
+      "base": "",
+      "fields": {
+        "question": "string",
+        "results": "option_result[]"
+      }
+    }
+  ],
+  "actions": [{
+      "action_name": "newmultiopt",
+      "type": "multi_opt_poll_msg"
+    }
+  ],
+  "tables": [{
+      "table_name": "multioptpoll",
+      "index_type": "str",
+      "key_names": [
+        "question"
+      ],
+      "key_types": [
+        "string"
+      ],
+      "type": "multi_opt_poll"
+    }
+  ]
+}
