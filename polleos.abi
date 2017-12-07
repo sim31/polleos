@@ -1,5 +1,8 @@
 {
-  "types": [],
+  "types": [{
+    "new_type_name": "opt",
+    "type": "string"
+  }],
   "structs": [{
       "name": "option",
       "base": "",
@@ -43,6 +46,17 @@
         "string"
       ],
       "type": "multi_opt_poll"
+    },
+    {
+      "table_name": "msgs",
+      "index_type": "str",
+      "key_names": [
+        "question"
+      ],
+      "key_types": [
+        "string"
+      ],
+      "type": "multi_opt_poll_msg"
     }
   ]
 }

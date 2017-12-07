@@ -20,8 +20,8 @@ namespace eosio { namespace raw {
 
     template<typename Stream>
     inline void pack( Stream& s, const option_result& value ) {
-      raw::pack(s, value.votes);
       raw::pack(s, static_cast<const option&>(value));
+      raw::pack(s, value.votes);
     }
 
     template<typename Stream>
@@ -31,7 +31,7 @@ namespace eosio { namespace raw {
     }
 
     template<typename Stream, typename T>
-    inline void pack( Stream& s, const T* arr, const uint32_t size) {
+    inline void pack( Stream& s, const T* arr, uint32_t size) {
       raw::pack(s, size);
       for (uint32_t i = 0; i < size; i++) {
         raw::pack(s, arr[i]);
@@ -63,7 +63,7 @@ namespace eosio { namespace raw {
     template<typename Stream>
     inline void pack( Stream& s, const multi_opt_poll& value ) {
       raw::pack(s, value.question);
-      raw::pack(s, value.results, 4);
+      raw::pack<Stream, option_result>(s, value.results, 4);
     }
 
     template<typename Stream>
@@ -110,6 +110,7 @@ namespace eosio {
   void print_ident(int n){while(n-->0){print("  ");}};
 
   void dump(const option_result& value, int tab=0) {
+    print_ident(tab);print("name:[");prints_l(value.name.get_data(), value.name.get_size());print("]\n");
     print_ident(tab);print("votes:[");printi(value.votes);print("]\n");
   }
 
@@ -125,6 +126,15 @@ namespace eosio {
     }
     print_ident(tab);print("]\n");
   }
+  void dump(const multi_opt_poll& value, int tab=0) {
+    print_ident(tab);print("key:[");prints_l(value.question.get_data(), value.question.get_size());print("]\n");
+    print_ident(tab);print("value:[");print("\n");
+    for (int i = 0; i < 4; i++) {
+      eosio::dump(value.results[i], tab + 1);
+    }
+    print_ident(tab);print("]\n");
+  }
+
 
 //  void dump(const multi_opt_poll& value, int tab=0) {
 //    print_ident(tab);print("key:[");prints_l(value.key.get_data(), value.key.get_size());print("]\n");
