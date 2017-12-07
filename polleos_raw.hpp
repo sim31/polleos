@@ -26,8 +26,8 @@ namespace eosio { namespace raw {
 
     template<typename Stream>
     inline void unpack( Stream& s, option_result& value ) {
-      raw::unpack(s, value.votes);
       raw::unpack(s, static_cast<option&>(value));
+      raw::unpack(s, value.votes);
     }
 
     template<typename Stream, typename T>
@@ -48,10 +48,25 @@ namespace eosio { namespace raw {
       }
     }
 
+    template<typename T>
+    inline bytes pack(const T* arr, uint32_t size) {
+      eosio::datastream<size_t> s;
+      eosio::raw::pack<eosio::datastream<size_t>, T>(s, arr, size);
+      bytes b;
+      b.len = s.tellp();
+      b.data = (uint8_t*)eosio::malloc(b.len);
+
+      if( b.len ) {
+         eosio::datastream<char*>  ds( (char*)b.data, b.len );
+         eosio::raw::pack<eosio::datastream<char*>, T>(ds, arr, size);
+      }
+      return b;
+    }
+
     template<typename Stream>
     inline void pack( Stream& s, const multi_opt_poll_msg& value ) {
       raw::pack(s, value.question);
-      raw::pack(s, value.options, 4);
+      raw::pack<Stream, option>(s, value.options, 4);
     }
 
     template<typename Stream>
