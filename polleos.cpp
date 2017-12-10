@@ -11,6 +11,12 @@ namespace CONTRACT_NAME {
     ::store_str(CONTRACT_NAME_UINT64, N(multioptpoll), key, keylen,
                 (char*)value.data, value.len);
   }
+
+  void create_poll(const multi_opt_poll_msg& msg) {
+    assert( !poll_exists(msg), "Poll with this question already exists");
+    multi_opt_poll poll = multi_opt_poll(msg);
+    store_poll(poll);
+  }
 }
 
 using namespace CONTRACT_NAME;
@@ -31,16 +37,7 @@ extern "C" {
       if (code == CONTRACT_NAME_UINT64) {
         if (action == N(newmultiopt)) {
           auto msg = eosio::current_message<multi_opt_poll_msg>();
-          eosio::print("message:\n");
-          eosio::dump(msg);
-          eosio::print("size: ", message_size());
-          // Test packing
-          multi_opt_poll poll;
-          poll.question = msg.question;
-          for (int i = 0; i < 4; i++) {
-             poll.results[i].name = msg.options[i].name;
-          }
-          store_poll(poll);
+          create_poll(msg);
         }
       }
     }

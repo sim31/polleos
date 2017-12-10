@@ -14,7 +14,7 @@
       "base": "",
       "fields": {
         "question": "string",
-        "options": "option[]"
+        "options": "string[]"
       }
     },{
       "name": "option_result",

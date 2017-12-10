@@ -32,7 +32,8 @@ namespace eosio { namespace raw {
 
     template<typename Stream, typename T>
     inline void pack( Stream& s, const T* arr, uint32_t size) {
-      raw::pack(s, size);
+      unsigned_int size1(size);
+      raw::pack(s, size1);
       for (uint32_t i = 0; i < size; i++) {
         raw::pack(s, arr[i]);
       }
@@ -40,9 +41,10 @@ namespace eosio { namespace raw {
 
     template<typename Stream, typename T>
     inline void unpack( Stream& s, T* arr, uint32_t size) {
-      uint32_t real_size;
+      unsigned_int real_size;
       raw::unpack(s, real_size);
-      assert(real_size <= size, "Trying to unpack bigger array than buffer allows");
+      eosio::print("real_size: ", (uint32_t)real_size, "\n");
+      assert((uint32_t)real_size <= size, "Trying to unpack bigger array than buffer allows");
       for (uint32_t i = 0; i < real_size; i++) {
         raw::unpack(s, arr[i]);
       }
