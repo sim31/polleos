@@ -56,7 +56,7 @@
       "type": "multi_opt_poll"
     },
     {
-      "table_name": "votes",
+      "table_name": "optvotes",
       "index_type": "str",
       "key_names": [
         "question"

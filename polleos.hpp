@@ -89,8 +89,9 @@ namespace CONTRACT_NAME {
   }
 
   bool has_voted(const eosio::string& question, account_name account, table_name poll_type) {
-    //TODO:
-    return false;
+    int32_t r = load_str(account, CONTRACT_NAME_UINT64, poll_type,
+                         (char*)question.get_data(), question.get_size(), nullptr, 0);
+    return r >= 0;
   }
 
   inline bool has_voted(const multi_opt_vote& vote) {

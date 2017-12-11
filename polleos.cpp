@@ -26,16 +26,22 @@ namespace CONTRACT_NAME {
     char* key = (char*)poll.question.get_data();
     uint32_t keylen = poll.question.get_size();
     bytes value = eosio::raw::pack<option_result>(poll.results, 4);
-    ::store_str(CONTRACT_NAME_UINT64, N(multioptpoll), key, keylen,
+    store_str(CONTRACT_NAME_UINT64, N(multioptpoll), key, keylen,
                 (char*)value.data, value.len);
   }
 
+  // Log that vote.voter account voted, so that we can prevent it from voting twice
+  void store_voter(const multi_opt_vote& vote) {
+    store_str(vote.voter, N(optvotes), (char*)vote.question.get_data(), vote.question.get_size(),
+              nullptr, 0);
+  }
+
   void store_vote(const multi_opt_vote& vote) {
-    //TODO: store vote in voter's scope
     multi_opt_poll poll;
     assert( get_poll(vote.question, poll), "Poll with this question does not exist");
     assert ( poll.add_vote(vote.option), "This option number does not exist for this poll");
     store_poll(poll);
+    store_voter(vote);
   }
 
   void create_poll(const multi_opt_poll_msg& msg) {
