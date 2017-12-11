@@ -88,6 +88,21 @@ namespace eosio { namespace raw {
       raw::unpack(s, value.question);
       raw::unpack(s, value.results, 4);
     }
+
+    template<typename Stream>
+    inline void pack( Stream& s, const multi_opt_vote& value ) {
+      raw::pack(s, value.question);
+      raw::pack(s, value.voter);
+      raw::pack(s, value.option);
+    }
+
+    template<typename Stream>
+    inline void unpack( Stream& s, multi_opt_vote& value ) {
+      raw::unpack(s, value.question);
+      raw::unpack(s, value.voter);
+      raw::unpack(s, value.option);
+    }
+
   }
 }
 
@@ -123,6 +138,12 @@ namespace eosio {
   multi_opt_poll current_message<multi_opt_poll>() {
     return current_message_ex<multi_opt_poll>();
   }
+
+  template<>
+  multi_opt_vote current_message<multi_opt_vote>() {
+    return current_message_ex<multi_opt_vote>();
+  }
+
 
   void print_ident(int n){while(n-->0){print("  ");}};
 
