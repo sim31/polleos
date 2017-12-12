@@ -4,7 +4,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-    polleos.cpp
+    polleos.cpp \
+    vector.cpp
 
 DISTFILES += \
     polleos.abi
@@ -12,7 +13,8 @@ DISTFILES += \
 HEADERS += \
     polleos.hpp \
     polleos.gen.hpp \
-    polleos_raw.hpp
+    polleos_raw.hpp \
+    vector.hpp
 
 INCLUDEPATH += \
     /home/tadas/Programming/sources/eos/build/Debug/sdk/include
