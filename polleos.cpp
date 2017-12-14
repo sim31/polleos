@@ -8,15 +8,13 @@ namespace CONTRACT_NAME {
     bytes b = bytes { bufflen, (uint8_t*)eosio::malloc(bufflen) };
     int32_t r = load_poll(question, N(multioptpoll), (char*)b.data, b.len);
 
-    if ( r < 0)
+    if ( r <= 0)
       return false;
-    else if ( r == 0)
-      return true;
 
     poll.question = question;
     //eosio::raw::unpack((char*)b.data, r, poll.results);
     eosio::datastream<const char*> ds((const char*)b.data, r);
-    eosio::raw::unpack(ds, poll.results, 4);
+    poll.results_len = eosio::raw::unpack(ds, poll.results, max_options);
     eosio::free(b.data);
     return true;
   }
@@ -25,7 +23,7 @@ namespace CONTRACT_NAME {
     eosio::dump(poll);
     char* key = (char*)poll.question.get_data();
     uint32_t keylen = poll.question.get_size();
-    bytes value = eosio::raw::pack<option_result>(poll.results, 4);
+    bytes value = eosio::raw::pack<option_result>(poll.results, poll.results_len);
     store_str(CONTRACT_NAME_UINT64, N(multioptpoll), key, keylen,
                 (char*)value.data, value.len);
   }
@@ -38,7 +36,6 @@ namespace CONTRACT_NAME {
 
   void store_vote(const multi_opt_vote& vote) {
     multi_opt_poll poll;
-    eosio::print("store_vote called");
     assert( get_poll(vote.question, poll), "Poll with this question does not exist");
     assert ( poll.add_vote(vote.option), "This option number does not exist for this poll");
     store_poll(poll);
@@ -46,15 +43,15 @@ namespace CONTRACT_NAME {
   }
 
   void create_poll(const multi_opt_poll_msg& msg) {
-    assert( !poll_exists(msg), "Poll with this question already exists");
     assert( msg.is_valid(), "Poll is invalid. Check if question and option fields are not empty");
+    assert( !poll_exists(msg), "Poll with this question already exists");
     multi_opt_poll poll = multi_opt_poll(msg);
     store_poll(poll);
   }
 
   void add_vote(const multi_opt_vote& vote) {
-    eosio::print("add_vote called");
     eosio::require_auth(vote.voter);
+    assert( vote.is_valid(), "Vote is invalid");
     assert( !has_voted(vote), "This account has already voted in this poll");
     store_vote(vote);
   }
@@ -74,7 +71,6 @@ extern "C" {
 
     /// The apply method implements the dispatch of events to this contract
     void apply( uint64_t code, uint64_t action ) {
-      eosio::print("apply called");
       if (code == CONTRACT_NAME_UINT64) {
         if (action == N(newmultiopt)) {
           auto msg = eosio::current_message<multi_opt_poll_msg>();

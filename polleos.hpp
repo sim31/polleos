@@ -4,8 +4,8 @@
 #include <eoslib/db.hpp>
 #include <eoslib/string.hpp>
 
-#define CONTRACT_NAME polleos
-#define CONTRACT_NAME_UINT64 N(polleos)
+#define CONTRACT_NAME polleos1
+#define CONTRACT_NAME_UINT64 N(polleos1)
 
 namespace CONTRACT_NAME {
 
@@ -32,12 +32,12 @@ namespace CONTRACT_NAME {
   //@abi action newmultiopt
   struct PACKED (multi_opt_poll_msg) {
     eosio::string question;
-    uint8_t options_len;
+    uint8_t options_len = 0;
     option options[max_options];
 
     bool is_valid() const {
       //Check if question and all options have descriptions
-      if ( question.get_size() == 0 )
+      if ( question.get_size() == 0 || options_len < 2)
         return false;
       for (int i = 0; i < options_len; i++) {
         if ( options[i].name.get_size() == 0 )
@@ -50,7 +50,7 @@ namespace CONTRACT_NAME {
   //@abi table
   struct PACKED (multi_opt_poll) {
     eosio::string question;
-    uint8_t results_len;
+    uint8_t results_len = 0;
     option_result results[max_options];
 
     multi_opt_poll() {}
@@ -62,15 +62,11 @@ namespace CONTRACT_NAME {
     }
 
     bool has_option(uint32_t option_num) const {
-      //TODO: Adapt for dynamic arrays
-      eosio::print("option_num: ", option_num);
-      return (option_num >= 1 && option_num <= 4 && results[option_num-1].name.get_size() > 0);
-      //return (option_num >= 1 && option_num <= results_len);
+      return (option_num >= 1 && option_num <= results_len);
     }
 
     // Returns true if vote is successfully added
     bool add_vote(uint32_t option_num) {
-      eosio::print("option_num: ", option_num);
       if ( has_option(option_num) ) {
         results[option_num - 1].votes++;
         return true;
@@ -83,6 +79,10 @@ namespace CONTRACT_NAME {
     eosio::string question;
     account_name  voter;
     uint32_t      option;
+
+    bool is_valid() const {
+      return question.get_size() > 0 && option > 0 && option < max_options;
+    }
   };
 
   inline int32_t load_poll(const eosio::string& question, table_name table, char* buffer, uint32_t size) {

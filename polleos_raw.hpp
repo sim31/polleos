@@ -69,25 +69,25 @@ namespace eosio { namespace raw {
     template<typename Stream>
     inline void pack( Stream& s, const multi_opt_poll_msg& value ) {
       raw::pack(s, value.question);
-      raw::pack<Stream, option>(s, value.options, 4);
+      raw::pack<Stream, option>(s, value.options, value.options_len);
     }
 
     template<typename Stream>
     inline void unpack( Stream& s, multi_opt_poll_msg& value ) {
       raw::unpack(s, value.question);
-      raw::unpack(s, value.options, 4);
+      value.options_len = raw::unpack(s, value.options, max_options);
     }
 
     template<typename Stream>
     inline void pack( Stream& s, const multi_opt_poll& value ) {
       raw::pack(s, value.question);
-      raw::pack<Stream, option_result>(s, value.results, 4);
+      raw::pack<Stream, option_result>(s, value.results, value.results_len);
     }
 
     template<typename Stream>
     inline void unpack( Stream& s, multi_opt_poll& value ) {
       raw::unpack(s, value.question);
-      raw::unpack(s, value.results, 4);
+      value.results_len = raw::unpack(s, value.results, max_options);
     }
 
     template<typename Stream>
