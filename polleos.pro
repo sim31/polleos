@@ -5,7 +5,8 @@ CONFIG -= qt
 
 SOURCES += \
     polleos.cpp \
-    vector.cpp
+    vector.cpp \
+    tests.cpp
 
 DISTFILES += \
     polleos.abi

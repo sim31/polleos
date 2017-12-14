@@ -25,7 +25,7 @@ private:
 
   void reallocate(size_t capacity, bool save) {
     if ( save && !is_empty() ) {
-      T* nbegin = malloc(capacity * sizeof(T));
+      T* nbegin = (T*)malloc(capacity * sizeof(T));
       assert(nbegin != nullptr, "malloc failed");
       size_t new_size = min(capacity, get_size());
       move_to(nbegin, new_size);
@@ -43,7 +43,7 @@ private:
   void move_to(T* dest, size_t n) {
     auto it = begin;
     for (size_t i = 0; i < n; i++, it++, dest++) {
-      new(dest) T(it);
+      new ((void*)dest) T(it);
     }
   }
 
@@ -56,7 +56,7 @@ private:
   void free() {
     if ( begin != nullptr ) {
       clear();
-      free(begin);
+      ::free(begin);
       begin = end = capacity_end = nullptr;
     }
   }
@@ -83,7 +83,7 @@ private:
   }
 
   void _pop_back() {
-    *(--end).~T();
+    (--end)->~T();
   }
 
   void _pop_back(size_t n) {
