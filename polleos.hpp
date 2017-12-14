@@ -9,6 +9,8 @@
 
 namespace CONTRACT_NAME {
 
+  const size_t max_options = 32;
+
   struct PACKED (option) {
     eosio::string name;
 
@@ -30,28 +32,45 @@ namespace CONTRACT_NAME {
   //@abi action newmultiopt
   struct PACKED (multi_opt_poll_msg) {
     eosio::string question;
-    option options[4];
+    uint8_t options_len;
+    option options[max_options];
+
+    bool is_valid() const {
+      //Check if question and all options have descriptions
+      if ( question.get_size() == 0 )
+        return false;
+      for (int i = 0; i < options_len; i++) {
+        if ( options[i].name.get_size() == 0 )
+          return false;
+      }
+      return true;
+    }
   };
 
   //@abi table
   struct PACKED (multi_opt_poll) {
     eosio::string question;
-    option_result results[4];
+    uint8_t results_len;
+    option_result results[max_options];
 
     multi_opt_poll() {}
     multi_opt_poll(const multi_opt_poll_msg& msg) : question(msg.question) {
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < msg.options_len; i++) {
         results[i] = option(msg.options[i]);
       }
+      results_len = msg.options_len;
     }
 
-    bool has_option(uint32_t option_num) {
+    bool has_option(uint32_t option_num) const {
       //TODO: Adapt for dynamic arrays
+      eosio::print("option_num: ", option_num);
       return (option_num >= 1 && option_num <= 4 && results[option_num-1].name.get_size() > 0);
+      //return (option_num >= 1 && option_num <= results_len);
     }
 
     // Returns true if vote is successfully added
     bool add_vote(uint32_t option_num) {
+      eosio::print("option_num: ", option_num);
       if ( has_option(option_num) ) {
         results[option_num - 1].votes++;
         return true;

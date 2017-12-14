@@ -40,7 +40,7 @@ namespace eosio { namespace raw {
     }
 
     template<typename Stream, typename T>
-    inline void unpack( Stream& s, T* arr, uint32_t size) {
+    inline uint32_t unpack( Stream& s, T* arr, uint32_t size) {
       unsigned_int real_size;
       raw::unpack(s, real_size);
       eosio::print("real_size: ", (uint32_t)real_size, "\n");
@@ -48,6 +48,7 @@ namespace eosio { namespace raw {
       for (uint32_t i = 0; i < real_size; i++) {
         raw::unpack(s, arr[i]);
       }
+      return real_size;
     }
 
     template<typename T>

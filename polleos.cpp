@@ -38,6 +38,7 @@ namespace CONTRACT_NAME {
 
   void store_vote(const multi_opt_vote& vote) {
     multi_opt_poll poll;
+    eosio::print("store_vote called");
     assert( get_poll(vote.question, poll), "Poll with this question does not exist");
     assert ( poll.add_vote(vote.option), "This option number does not exist for this poll");
     store_poll(poll);
@@ -46,11 +47,13 @@ namespace CONTRACT_NAME {
 
   void create_poll(const multi_opt_poll_msg& msg) {
     assert( !poll_exists(msg), "Poll with this question already exists");
+    assert( msg.is_valid(), "Poll is invalid. Check if question and option fields are not empty");
     multi_opt_poll poll = multi_opt_poll(msg);
     store_poll(poll);
   }
 
   void add_vote(const multi_opt_vote& vote) {
+    eosio::print("add_vote called");
     eosio::require_auth(vote.voter);
     assert( !has_voted(vote), "This account has already voted in this poll");
     store_vote(vote);
@@ -71,6 +74,7 @@ extern "C" {
 
     /// The apply method implements the dispatch of events to this contract
     void apply( uint64_t code, uint64_t action ) {
+      eosio::print("apply called");
       if (code == CONTRACT_NAME_UINT64) {
         if (action == N(newmultiopt)) {
           auto msg = eosio::current_message<multi_opt_poll_msg>();
