@@ -4,8 +4,8 @@
 #include <eoslib/db.hpp>
 #include <eoslib/string.hpp>
 
-#define CONTRACT_NAME polleos1
-#define CONTRACT_NAME_UINT64 N(polleos1)
+#define CONTRACT_NAME polleos
+#define CONTRACT_NAME_UINT64 N(polleos)
 
 namespace CONTRACT_NAME {
 
@@ -29,8 +29,8 @@ namespace CONTRACT_NAME {
 
   typedef option_result* results_array;
 
-  //@abi action newmultiopt
-  struct PACKED (multi_opt_poll_msg) {
+  //@abi action newoptpoll
+  struct PACKED (opt_poll_msg) {
     eosio::string question;
     uint8_t options_len = 0;
     option options[max_options];
@@ -48,13 +48,13 @@ namespace CONTRACT_NAME {
   };
 
   //@abi table
-  struct PACKED (multi_opt_poll) {
+  struct PACKED (opt_poll) {
     eosio::string question;
     uint8_t results_len = 0;
     option_result results[max_options];
 
-    multi_opt_poll() {}
-    multi_opt_poll(const multi_opt_poll_msg& msg) : question(msg.question) {
+    opt_poll() {}
+    opt_poll(const opt_poll_msg& msg) : question(msg.question) {
       for (int i = 0; i < msg.options_len; i++) {
         results[i] = option(msg.options[i]);
       }
@@ -75,7 +75,7 @@ namespace CONTRACT_NAME {
   };
 
   //@abi action vote
-  struct multi_opt_vote {
+  struct opt_vote {
     eosio::string question;
     account_name  voter;
     uint32_t      option;
@@ -91,7 +91,7 @@ namespace CONTRACT_NAME {
   }
 
   // Returns true if finds a poll with specified key (question)
-  bool get_poll(const eosio::string& question, multi_opt_poll& poll);
+  bool get_poll(const eosio::string& question, opt_poll& poll);
 
   bool poll_exists(const eosio::string& question, table_name poll_type) {
     char buff[1];
@@ -99,12 +99,12 @@ namespace CONTRACT_NAME {
     return r > -1;
   }
 
-  inline bool poll_exists(const multi_opt_poll_msg& poll_msg) {
-    return poll_exists(poll_msg.question, N(multioptpoll));
+  inline bool poll_exists(const opt_poll_msg& poll_msg) {
+    return poll_exists(poll_msg.question, N(optpoll));
   }
 
-  inline bool poll_exists(const multi_opt_poll& poll) {
-    return poll_exists(poll.question, N(multioptpoll));
+  inline bool poll_exists(const opt_poll& poll) {
+    return poll_exists(poll.question, N(optpoll));
   }
 
   bool has_voted(const eosio::string& question, account_name account, table_name poll_type) {
@@ -113,7 +113,7 @@ namespace CONTRACT_NAME {
     return r >= 0;
   }
 
-  inline bool has_voted(const multi_opt_vote& vote) {
+  inline bool has_voted(const opt_vote& vote) {
     return has_voted(vote.question, vote.voter, N(optvotes));
   }
 }

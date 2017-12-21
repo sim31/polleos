@@ -67,38 +67,38 @@ namespace eosio { namespace raw {
     }
 
     template<typename Stream>
-    inline void pack( Stream& s, const multi_opt_poll_msg& value ) {
+    inline void pack( Stream& s, const opt_poll_msg& value ) {
       raw::pack(s, value.question);
       raw::pack<Stream, option>(s, value.options, value.options_len);
     }
 
     template<typename Stream>
-    inline void unpack( Stream& s, multi_opt_poll_msg& value ) {
+    inline void unpack( Stream& s, opt_poll_msg& value ) {
       raw::unpack(s, value.question);
       value.options_len = raw::unpack(s, value.options, max_options);
     }
 
     template<typename Stream>
-    inline void pack( Stream& s, const multi_opt_poll& value ) {
+    inline void pack( Stream& s, const opt_poll& value ) {
       raw::pack(s, value.question);
       raw::pack<Stream, option_result>(s, value.results, value.results_len);
     }
 
     template<typename Stream>
-    inline void unpack( Stream& s, multi_opt_poll& value ) {
+    inline void unpack( Stream& s, opt_poll& value ) {
       raw::unpack(s, value.question);
       value.results_len = raw::unpack(s, value.results, max_options);
     }
 
     template<typename Stream>
-    inline void pack( Stream& s, const multi_opt_vote& value ) {
+    inline void pack( Stream& s, const opt_vote& value ) {
       raw::pack(s, value.question);
       raw::pack(s, value.voter);
       raw::pack(s, value.option);
     }
 
     template<typename Stream>
-    inline void unpack( Stream& s, multi_opt_vote& value ) {
+    inline void unpack( Stream& s, opt_vote& value ) {
       raw::unpack(s, value.question);
       raw::unpack(s, value.voter);
       raw::unpack(s, value.option);
@@ -126,8 +126,8 @@ namespace eosio {
 //  }
 
   template<>
-  multi_opt_poll_msg current_message<multi_opt_poll_msg>() {
-    return current_message_ex<multi_opt_poll_msg>();
+  opt_poll_msg current_message<opt_poll_msg>() {
+    return current_message_ex<opt_poll_msg>();
   }
 
 //  template<>
@@ -136,13 +136,13 @@ namespace eosio {
 //  }
 
   template<>
-  multi_opt_poll current_message<multi_opt_poll>() {
-    return current_message_ex<multi_opt_poll>();
+  opt_poll current_message<opt_poll>() {
+    return current_message_ex<opt_poll>();
   }
 
   template<>
-  multi_opt_vote current_message<multi_opt_vote>() {
-    return current_message_ex<multi_opt_vote>();
+  opt_vote current_message<opt_vote>() {
+    return current_message_ex<opt_vote>();
   }
 
 
@@ -157,7 +157,7 @@ namespace eosio {
     print_ident(tab);print("name:[");prints_l(value.name.get_data(), value.name.get_size());print("]\n");
   }
 
-  void dump(const multi_opt_poll_msg& value, int tab=0) {
+  void dump(const opt_poll_msg& value, int tab=0) {
     print_ident(tab);print("key:[");prints_l(value.question.get_data(), value.question.get_size());print("]\n");
     print_ident(tab);print("value:[");print("\n");
     for (int i = 0; i < 4; i++) {
@@ -165,7 +165,7 @@ namespace eosio {
     }
     print_ident(tab);print("]\n");
   }
-  void dump(const multi_opt_poll& value, int tab=0) {
+  void dump(const opt_poll& value, int tab=0) {
     print_ident(tab);print("key:[");prints_l(value.question.get_data(), value.question.get_size());print("]\n");
     print_ident(tab);print("value:[");print("\n");
     for (int i = 0; i < 4; i++) {
@@ -175,7 +175,7 @@ namespace eosio {
   }
 
 
-//  void dump(const multi_opt_poll& value, int tab=0) {
+//  void dump(const opt_poll& value, int tab=0) {
 //    print_ident(tab);print("key:[");prints_l(value.key.get_data(), value.key.get_size());print("]\n");
 //    print_ident(tab);print("value:[");print("\n"); eosio::dump(value.value, tab+1);print_ident(tab);print("]\n");
 //  }
