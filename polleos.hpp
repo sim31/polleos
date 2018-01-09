@@ -3,12 +3,12 @@
 #include <eoslib/eos.hpp>
 #include <eoslib/db.hpp>
 #include <eoslib/string.hpp>
-//#include <currency.hpp>
+#include <currency.hpp>
 
 #define CONTRACT_NAME polleos
 #define CONTRACT_NAME_UINT64 N(polleos)
 
-namespace CONTRACT_NAME {
+namespace polleos {
 
   const size_t max_options = 32;
 

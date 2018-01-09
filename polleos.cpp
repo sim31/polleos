@@ -2,7 +2,7 @@
 #include <polleos_raw.hpp>
 #include <currency.hpp>
 
-namespace CONTRACT_NAME {
+namespace polleos {
 
   bool get_poll(const eosio::string& question, opt_poll& poll) {
     const uint32_t bufflen = 1024;
@@ -58,7 +58,7 @@ namespace CONTRACT_NAME {
   }
 }
 
-using namespace CONTRACT_NAME;
+using namespace polleos;
 /**
  *  The init() and apply() methods must have C calling convention so that the blockchain can lookup and
  *  call these methods.
@@ -80,7 +80,7 @@ extern "C" {
           auto msg = eosio::current_message<opt_vote>();
           add_vote(msg);
 
-          currency::account acc = currency::get_account(N(inita));
+          account acc = get_account(N(currency), N(inita));
           eosio::print("inita currency balance: ", acc.balance);
         }
       }

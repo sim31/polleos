@@ -5,7 +5,7 @@
 #include <eoslib/raw_fwd.hpp>
 #include <polleos.hpp>
 
-using namespace CONTRACT_NAME;
+using namespace polleos;
 
 namespace eosio { namespace raw {
     template<typename Stream>
