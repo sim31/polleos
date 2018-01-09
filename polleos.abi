@@ -14,6 +14,13 @@
         "options": "string[]"
       }
     },{
+       "name": "opt_token_poll_msg",
+       "base": "",
+       "fields": {
+         "token": "uint64",
+         "stakeweighted": "bool"
+       }
+    },{
       "name": "option_result",
       "base": "option",
       "fields": {
@@ -24,8 +31,11 @@
       "base": "",
       "fields": {
         "question": "string",
-        "results": "option_result[]"
-      }
+        "results": "option_result[]",
+        "tokenpoll": "bool",
+        "token": "uint64",
+        "stakeweighted": "bool"
+        }
       },{
         "name": "opt_vote",
         "base": "",
@@ -34,12 +44,22 @@
           "voter": "account_name",
           "option": "int32"
         }
+      },{
+        "name": "account",
+        "base": "",
+        "fields": {
+          "key": "name",
+          "balance": "uint64"
+        }
       }
     ],
   "actions": [{
       "action_name": "newoptpoll",
       "type": "opt_poll_msg"
     },{
+      "action_name": "newtokenpoll",
+      "type": "opt_token_poll_msg"
+    ,{
       "action_name": "vote",
       "type": "opt_vote"
     }
@@ -65,6 +85,13 @@
         "string"
       ],
       "type": "string"
+    },
+    {
+      "table_name": "account",
+      "type": "account",
+      "index_type": "i64",
+      "key_names" : ["key"],
+      "key_types" : ["name"]
     }
   ]
 }

@@ -12,7 +12,8 @@ DISTFILES += \
 HEADERS += \
     polleos.hpp \
     polleos.gen.hpp \
-    polleos_raw.hpp
+    polleos_raw.hpp \
+    currency.hpp
 
 INCLUDEPATH += \
     /home/tadas/Programming/sources/eos/build/Debug/sdk/include

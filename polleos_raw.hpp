@@ -43,7 +43,7 @@ namespace eosio { namespace raw {
     inline uint32_t unpack( Stream& s, T* arr, uint32_t size) {
       unsigned_int real_size;
       raw::unpack(s, real_size);
-      eosio::print("real_size: ", (uint32_t)real_size, "\n");
+      //eosio::print("real_size: ", (uint32_t)real_size, "\n");
       assert((uint32_t)real_size <= size, "Trying to unpack bigger array than buffer allows");
       for (uint32_t i = 0; i < real_size; i++) {
         raw::unpack(s, arr[i]);
@@ -79,15 +79,35 @@ namespace eosio { namespace raw {
     }
 
     template<typename Stream>
+    inline void pack( Stream& s, const opt_token_poll_msg& value) {
+      raw::pack(s, static_cast<const opt_poll_msg&>(value));
+      raw::pack(s, value.token);
+      raw::pack(s, value.stake_weighted);
+    }
+
+    template<typename Stream>
+    inline void unpack( Stream& s, opt_token_poll_msg& value) {
+      raw::unpack(s, static_cast<opt_poll_msg&>(value));
+      raw::unpack(s, value.token);
+      raw::unpack(s, value.stake_weighted);
+    }
+
+    template<typename Stream>
     inline void pack( Stream& s, const opt_poll& value ) {
       raw::pack(s, value.question);
       raw::pack<Stream, option_result>(s, value.results, value.results_len);
+      raw::pack(s, value.is_token_poll);
+      raw::pack(s, value.token);
+      raw::pack(s, value.stake_weighted);
     }
 
     template<typename Stream>
     inline void unpack( Stream& s, opt_poll& value ) {
       raw::unpack(s, value.question);
       value.results_len = raw::unpack(s, value.results, max_options);
+      raw::unpack(s, value.is_token_poll);
+      raw::unpack(s, value.token);
+      raw::unpack(s, value.stake_weighted);
     }
 
     template<typename Stream>
@@ -128,6 +148,11 @@ namespace eosio {
   template<>
   opt_poll_msg current_message<opt_poll_msg>() {
     return current_message_ex<opt_poll_msg>();
+  }
+
+  template<>
+  opt_token_poll_msg current_message<opt_token_poll_msg>() {
+    return current_message_ex<opt_token_poll_msg>();
   }
 
 //  template<>

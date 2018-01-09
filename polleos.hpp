@@ -3,6 +3,7 @@
 #include <eoslib/eos.hpp>
 #include <eoslib/db.hpp>
 #include <eoslib/string.hpp>
+//#include <currency.hpp>
 
 #define CONTRACT_NAME polleos
 #define CONTRACT_NAME_UINT64 N(polleos)
@@ -47,11 +48,20 @@ namespace CONTRACT_NAME {
     }
   };
 
+  //@abi action newtokenpoll
+  struct PACKED (opt_token_poll_msg) : opt_poll_msg {
+    token_name token;
+    bool stake_weighted;
+  };
+
   //@abi table
   struct PACKED (opt_poll) {
     eosio::string question;
     uint8_t results_len = 0;
     option_result results[max_options];
+    bool is_token_poll = false;
+    token_name token;
+    bool stake_weighted;
 
     opt_poll() {}
     opt_poll(const opt_poll_msg& msg) : question(msg.question) {

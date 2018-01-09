@@ -1,5 +1,6 @@
 #include <polleos.hpp>
 #include <polleos_raw.hpp>
+#include <currency.hpp>
 
 namespace CONTRACT_NAME {
 
@@ -20,7 +21,7 @@ namespace CONTRACT_NAME {
   }
 
   void store_poll(const opt_poll& poll) {
-    eosio::dump(poll);
+    //eosio::dump(poll);
     char* key = (char*)poll.question.get_data();
     uint32_t keylen = poll.question.get_size();
     bytes value = eosio::raw::pack<option_result>(poll.results, poll.results_len);
@@ -78,6 +79,9 @@ extern "C" {
         } else if (action == N(vote)) {
           auto msg = eosio::current_message<opt_vote>();
           add_vote(msg);
+
+          currency::account acc = currency::get_account(N(inita));
+          eosio::print("inita currency balance: ", acc.balance);
         }
       }
     }
