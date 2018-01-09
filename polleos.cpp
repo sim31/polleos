@@ -43,9 +43,19 @@ namespace polleos {
     store_voter(vote);
   }
 
-  void create_poll(const opt_poll_msg& msg) {
+  void validate_poll_msg(const opt_poll_msg& msg) {
     assert( msg.is_valid(), "Poll is invalid. Check if question and option fields are not empty");
     assert( !poll_exists(msg), "Poll with this question already exists");
+  }
+
+  void create_poll(const opt_poll_msg& msg) {
+    validate_poll_msg(msg);
+    opt_poll poll = opt_poll(msg);
+    store_poll(poll);
+  }
+
+  void create_poll(const opt_token_poll_msg& msg) {
+    validate_poll_msg(msg);
     opt_poll poll = opt_poll(msg);
     store_poll(poll);
   }
@@ -75,6 +85,9 @@ extern "C" {
       if (code == CONTRACT_NAME_UINT64) {
         if (action == N(newoptpoll)) {
           auto msg = eosio::current_message<opt_poll_msg>();
+          create_poll(msg);
+        } else if (action == N(newtokenpoll)) {
+          auto msg = eosio::current_message<opt_token_poll_msg>();
           create_poll(msg);
         } else if (action == N(vote)) {
           auto msg = eosio::current_message<opt_vote>();

@@ -65,10 +65,12 @@ namespace polleos {
 
     opt_poll() {}
     opt_poll(const opt_poll_msg& msg) : question(msg.question) {
-      for (int i = 0; i < msg.options_len; i++) {
-        results[i] = option(msg.options[i]);
-      }
-      results_len = msg.options_len;
+      set_options(msg.options, msg.options_len);
+    }
+
+    opt_poll(const opt_token_poll_msg& msg) : question(msg.question),
+        stake_weighted(msg.stake_weighted), token(msg.token), is_token_poll(true) {
+      set_options(msg.options, msg.options_len);
     }
 
     bool has_option(uint32_t option_num) const {
@@ -81,6 +83,13 @@ namespace polleos {
         results[option_num - 1].votes++;
         return true;
       } else return false;
+    }
+
+    void set_options(const option* options, uint8_t options_len) {
+      for (int i = 0; i < options_len; i++) {
+        results[i] = option(options[i]);
+      }
+      results_len = options_len;
     }
   };
 
