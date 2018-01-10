@@ -9,6 +9,8 @@
 
 namespace CONTRACT_NAME {
 
+  typedef uint64_t poll_id;
+
   const size_t max_options = 32;
 
   struct PACKED (option) {
@@ -49,6 +51,7 @@ namespace CONTRACT_NAME {
 
   //@abi table
   struct PACKED (opt_poll) {
+    poll_id id;
     eosio::string question;
     uint8_t results_len = 0;
     option_result results[max_options];
@@ -60,6 +63,7 @@ namespace CONTRACT_NAME {
       }
       results_len = msg.options_len;
     }
+    opt_poll(poll_id id) : id(id) {}
 
     bool has_option(uint32_t option_num) const {
       return (option_num >= 1 && option_num <= results_len);
@@ -76,45 +80,41 @@ namespace CONTRACT_NAME {
 
   //@abi action vote
   struct opt_vote {
-    eosio::string question;
+    poll_id id;
     account_name  voter;
     uint32_t      option;
 
     bool is_valid() const {
-      return question.get_size() > 0 && option > 0 && option < max_options;
+      return option > 0 && option < max_options;
     }
   };
 
-  inline int32_t load_poll(const eosio::string& question, table_name table, char* buffer, uint32_t size) {
-    return load_str(CONTRACT_NAME_UINT64, CONTRACT_NAME_UINT64, table,
-             (char*)question.get_data(), question.get_size(), buffer, size);
+  inline int32_t load_poll(poll_id id, table_name table, void* buffer, uint32_t size) {
+    memcpy(buffer, &id, sizeof (poll_id));
+    return load_i64(CONTRACT_NAME_UINT64, CONTRACT_NAME_UINT64, table, buffer, size);
   }
 
-  // Returns true if finds a poll with specified key (question)
-  bool get_poll(const eosio::string& question, opt_poll& poll);
+  // Returns true if finds a poll with id specified in poll parameter
+  bool get_poll(opt_poll& poll);
 
-  bool poll_exists(const eosio::string& question, table_name poll_type) {
-    char buff[1];
-    int r = load_poll(question, poll_type, buff, 1);
+  bool poll_exists(poll_id id, table_name poll_type) {
+    const size_t bufflen = sizeof(poll_id) + 1;
+    char buff[bufflen];
+    int r = load_poll(id, poll_type, buff, bufflen);
     return r > -1;
   }
 
-  inline bool poll_exists(const opt_poll_msg& poll_msg) {
-    return poll_exists(poll_msg.question, N(optpoll));
-  }
-
   inline bool poll_exists(const opt_poll& poll) {
-    return poll_exists(poll.question, N(optpoll));
+    return poll_exists(poll.id, N(optpoll));
   }
 
-  bool has_voted(const eosio::string& question, account_name account, table_name poll_type) {
-    int32_t r = load_str(account, CONTRACT_NAME_UINT64, poll_type,
-                         (char*)question.get_data(), question.get_size(), nullptr, 0);
-    return r >= 0;
+  inline bool has_voted(poll_id id, account_name account, table_name poll_type) {
+    int32_t r = load_i64(account, CONTRACT_NAME_UINT64, poll_type, &id, sizeof(poll_id) + 1);
+    return r > -1;
   }
 
   inline bool has_voted(const opt_vote& vote) {
-    return has_voted(vote.question, vote.voter, N(optvotes));
+    return has_voted(vote.id, vote.voter, N(optvotes));
   }
 }
 

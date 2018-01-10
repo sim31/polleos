@@ -23,6 +23,7 @@
       "name": "opt_poll",
       "base": "",
       "fields": {
+        "id": "uint64"
         "question": "string",
         "results": "option_result[]"
       }
@@ -30,7 +31,7 @@
         "name": "opt_vote",
         "base": "",
         "fields": {
-          "question": "string",
+          "id": "uint64",
           "voter": "account_name",
           "option": "int32"
         }
@@ -46,25 +47,25 @@
   ],
   "tables": [{
       "table_name": "optpoll",
-      "index_type": "str",
+      "index_type": "i64",
       "key_names": [
-        "question"
+        "id"
       ],
       "key_types": [
-        "string"
+        "uint64"
       ],
       "type": "opt_poll"
     },
     {
       "table_name": "optvotes",
-      "index_type": "str",
+      "index_type": "i64",
       "key_names": [
-        "question"
+        "id"
       ],
       "key_types": [
-        "string"
+        "int64"
       ],
-      "type": "string"
+      "type": "int64"
     }
   ]
 }

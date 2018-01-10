@@ -43,7 +43,7 @@ namespace eosio { namespace raw {
     inline uint32_t unpack( Stream& s, T* arr, uint32_t size) {
       unsigned_int real_size;
       raw::unpack(s, real_size);
-      eosio::print("real_size: ", (uint32_t)real_size, "\n");
+      //eosio::print("real_size: ", (uint32_t)real_size, "\n");
       assert((uint32_t)real_size <= size, "Trying to unpack bigger array than buffer allows");
       for (uint32_t i = 0; i < real_size; i++) {
         raw::unpack(s, arr[i]);
@@ -80,26 +80,28 @@ namespace eosio { namespace raw {
 
     template<typename Stream>
     inline void pack( Stream& s, const opt_poll& value ) {
+      raw::pack(s, value.id);
       raw::pack(s, value.question);
       raw::pack<Stream, option_result>(s, value.results, value.results_len);
     }
 
     template<typename Stream>
     inline void unpack( Stream& s, opt_poll& value ) {
+      raw::unpack(s, value.id);
       raw::unpack(s, value.question);
       value.results_len = raw::unpack(s, value.results, max_options);
     }
 
     template<typename Stream>
     inline void pack( Stream& s, const opt_vote& value ) {
-      raw::pack(s, value.question);
+      raw::pack(s, value.id);
       raw::pack(s, value.voter);
       raw::pack(s, value.option);
     }
 
     template<typename Stream>
     inline void unpack( Stream& s, opt_vote& value ) {
-      raw::unpack(s, value.question);
+      raw::unpack(s, value.id);
       raw::unpack(s, value.voter);
       raw::unpack(s, value.option);
     }
