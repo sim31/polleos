@@ -18,7 +18,6 @@
        "base": "opt_poll_msg",
        "fields": {
          "token": "uint64",
-         "stakeweighted": "bool"
        }
     },{
       "name": "option_result",
@@ -33,9 +32,8 @@
         "id": "uint64"
         "question": "string",
         "results": "option_result[]",
-        "tokenpoll": "bool",
+        "tokenpoll": "uint8",
         "token": "uint64",
-        "stakeweighted": "bool"
         }
       },{
         "name": "opt_vote",
@@ -74,6 +72,7 @@
       "key_types": [
         "uint64"
       ],
+      "type": "opt_poll"
     },
     {
       "table_name": "optvotes",

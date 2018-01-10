@@ -82,14 +82,14 @@ namespace eosio { namespace raw {
     inline void pack( Stream& s, const opt_token_poll_msg& value) {
       raw::pack(s, static_cast<const opt_poll_msg&>(value));
       raw::pack(s, value.token);
-      raw::pack(s, value.stake_weighted);
+      //raw::pack(s, value.stake_weighted);
     }
 
     template<typename Stream>
     inline void unpack( Stream& s, opt_token_poll_msg& value) {
       raw::unpack(s, static_cast<opt_poll_msg&>(value));
       raw::unpack(s, value.token);
-      raw::unpack(s, value.stake_weighted);
+      //raw::unpack(s, value.stake_weighted);
     }
 
     template<typename Stream>
@@ -99,7 +99,7 @@ namespace eosio { namespace raw {
       raw::pack<Stream, option_result>(s, value.results, value.results_len);
       raw::pack(s, value.is_token_poll);
       raw::pack(s, value.token);
-      raw::pack(s, value.stake_weighted);
+      //raw::pack(s, value.stake_weighted);
     }
 
     template<typename Stream>
@@ -109,7 +109,7 @@ namespace eosio { namespace raw {
       value.results_len = raw::unpack(s, value.results, max_options);
       raw::unpack(s, value.is_token_poll);
       raw::unpack(s, value.token);
-      raw::unpack(s, value.stake_weighted);
+      //raw::unpack(s, value.stake_weighted);
     }
 
     template<typename Stream>

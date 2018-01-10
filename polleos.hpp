@@ -41,7 +41,7 @@ namespace polleos {
     option_result results[max_options];
     bool is_token_poll = false;
     token_name token;
-    bool stake_weighted;
+    //bool stake_weighted;
 
     opt_poll() {}
     opt_poll(poll_id id) : id(id) {}
@@ -51,8 +51,8 @@ namespace polleos {
     }
 
     opt_poll(const eosio::string& question, const option* options, uint8_t options_len,
-             token_name token, bool stake_weighted) : question(question),
-      is_token_poll(true), token(token), stake_weighted(stake_weighted) {
+             token_name token) : question(question),
+      is_token_poll(true), token(token) {
 
       set_options(options, options_len);
     }
@@ -93,22 +93,13 @@ namespace polleos {
       }
       return true;
     }
-
-    opt_poll create_poll() const {
-      return opt_poll(question, options, options_len);
-    }
   };
 
   //@abi action newtokenpoll
   struct opt_token_poll_msg : opt_poll_msg {
     token_name token;
-    bool stake_weighted;
-
-    opt_poll create_poll() const {
-      return opt_poll(question, options, options_len, token, stake_weighted);
-    }
+    //bool stake_weighted;
   };
-
 
   //@abi action vote
   struct opt_vote {
@@ -126,7 +117,7 @@ namespace polleos {
   }
 
   opt_poll create_poll(const opt_token_poll_msg& msg) {
-    return opt_poll(msg.question, msg.options, msg.options_len, msg.token, msg.stake_weighted);
+    return opt_poll(msg.question, msg.options, msg.options_len, msg.token);
   }
 
 
