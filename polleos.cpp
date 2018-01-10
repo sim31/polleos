@@ -1,43 +1,46 @@
 #include <polleos.hpp>
 #include <polleos_raw.hpp>
 #include <currency.hpp>
+#include <eoslib/memory.hpp>
 
 namespace polleos {
 
-  bool get_poll(const eosio::string& question, opt_poll& poll) {
-    const uint32_t bufflen = 1024;
-    bytes b = bytes { bufflen, (uint8_t*)eosio::malloc(bufflen) };
-    int32_t r = load_poll(question, N(optpoll), (char*)b.data, b.len);
+  bool get_poll(opt_poll& poll) {
+    //FIXME: what happens if this size is not enough?
+    //       would be great to get size of the whole row beforehand.
+    const uint32_t bufflen = 2048;
+    char buff[bufflen];
+    int32_t r = load_poll(poll.id, N(optpoll), buff, bufflen);
 
     if ( r <= 0)
       return false;
 
-    poll.question = question;
     //eosio::raw::unpack((char*)b.data, r, poll.results);
-    eosio::datastream<const char*> ds((const char*)b.data, r);
-    poll.results_len = eosio::raw::unpack(ds, poll.results, max_options);
-    eosio::free(b.data);
+    eosio::datastream<const char*> ds(buff, r);
+    eosio::raw::unpack(ds, poll);
     return true;
   }
 
   void store_poll(const opt_poll& poll) {
     //eosio::dump(poll);
-    char* key = (char*)poll.question.get_data();
-    uint32_t keylen = poll.question.get_size();
-    bytes value = eosio::raw::pack<option_result>(poll.results, poll.results_len);
-    store_str(CONTRACT_NAME_UINT64, N(optpoll), key, keylen,
-                (char*)value.data, value.len);
+    //FIXME:
+    const uint32_t bufflen = 2048;
+    char buff[bufflen];
+    eosio::datastream<char*> ds(buff, bufflen);
+
+    eosio::raw::pack(ds, poll);
+
+    store_i64(CONTRACT_NAME_UINT64, N(optpoll), buff, ds.tellp());
   }
 
   // Log that vote.voter account voted, so that we can prevent it from voting twice
   void store_voter(const opt_vote& vote) {
-    store_str(vote.voter, N(optvotes), (char*)vote.question.get_data(), vote.question.get_size(),
-              nullptr, 0);
+    store_i64(vote.voter, N(optvotes), &vote.id, sizeof(poll_id));
   }
 
   void store_vote(const opt_vote& vote) {
-    opt_poll poll;
-    assert( get_poll(vote.question, poll), "Poll with this question does not exist");
+    opt_poll poll(vote.id);
+    assert( get_poll(poll), "Poll with this id does not exist");
     assert ( poll.add_vote(vote.option), "This option number does not exist for this poll");
     store_poll(poll);
     store_voter(vote);
@@ -45,20 +48,22 @@ namespace polleos {
 
   void validate_poll_msg(const opt_poll_msg& msg) {
     assert( msg.is_valid(), "Poll is invalid. Check if question and option fields are not empty");
-    assert( !poll_exists(msg), "Poll with this question already exists");
+  }
+
+  
+    void set_poll_id(opt_poll& poll) {
+    poll_id buff[2];
+    int32_t r = back_i64(CONTRACT_NAME_UINT64, CONTRACT_NAME_UINT64, N(optpoll), buff, sizeof(buff));
+    poll.id = ( r > -1) ? buff[0] + 1 : 0;
   }
 
   void create_poll(const opt_poll_msg& msg) {
     validate_poll_msg(msg);
     opt_poll poll = opt_poll(msg);
+    set_poll_id(poll);
     store_poll(poll);
   }
 
-  void create_poll(const opt_token_poll_msg& msg) {
-    validate_poll_msg(msg);
-    opt_poll poll = opt_poll(msg);
-    store_poll(poll);
-  }
 
   void add_vote(const opt_vote& vote) {
     eosio::require_auth(vote.voter);
