@@ -38,25 +38,17 @@ namespace polleos {
     store_i64(vote.voter, N(optvotes), &vote.id, sizeof(poll_id));
   }
 
-  bool is_stakeholder(account_name acc_name, token_name token) {
-    account acc = get_account(token, acc_name);
-    eosio::print("\nAccount balance: ", acc.balance, "\n");
-    eosio::print("token: ", eosio::name(token));
-    eosio::print("\naccount: ", eosio::name(acc_name), "\n");
-
-    account acc1 = get_account(N(currency), N(inita));
-    eosio::print("\nacc1 balance: ", acc1.balance, "\n");
-    return acc.balance > 0;
-  }
-
   void store_vote(const opt_vote& vote) {
     opt_poll poll(vote.id);
     assert( get_poll(poll), "Poll with this id does not exist");
+    uint64_t weight = 1;
     if ( poll.is_token_poll ) {
-      assert( is_stakeholder(vote.voter, poll.token ),
+      account acc = get_account(poll.token, vote.voter);
+      assert( acc.balance > 0,
               "Voter has to be a stakeholder of a token to participate in a poll");
+      weight *= acc.balance;
     }
-    assert ( poll.add_vote(vote.option), "This option number does not exist for this poll");
+    assert ( poll.add_vote(vote.option, weight), "This option number does not exist for this poll");
     store_poll(poll);
     store_voter(vote);
   }
@@ -64,7 +56,6 @@ namespace polleos {
   void validate_poll_msg(const opt_poll_msg& msg) {
     assert( msg.is_valid(), "Poll is invalid. Check if question and option fields are not empty");
   }
-
   
   void set_poll_id(opt_poll& poll) {
     poll_id buff[2];

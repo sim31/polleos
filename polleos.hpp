@@ -62,9 +62,9 @@ namespace polleos {
     }
 
     // Returns true if vote is successfully added
-    bool add_vote(uint32_t option_num) {
+    bool add_vote(uint32_t option_num, uint64_t weight) {
       if ( has_option(option_num) ) {
-        results[option_num - 1].votes++;
+        results[option_num - 1].votes += weight;
         return true;
       } else return false;
     }
