@@ -18,7 +18,7 @@ namespace polleos {
 
    inline account get_account(token_name token, account_name owner) {
      account owned_account;
-     load_i64(owner, token, N(account), &owner, sizeof(account));
+     int32_t r = load_i64(owner, token, N(account), &owned_account, sizeof(account));
      return owned_account;
    }
 }

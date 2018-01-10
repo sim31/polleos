@@ -39,9 +39,14 @@ namespace polleos {
   }
 
   bool is_stakeholder(account_name acc_name, token_name token) {
-    //TODO:
-    return true;
+    account acc = get_account(token, acc_name);
+    eosio::print("\nAccount balance: ", acc.balance, "\n");
+    eosio::print("token: ", eosio::name(token));
+    eosio::print("\naccount: ", eosio::name(acc_name), "\n");
 
+    account acc1 = get_account(N(currency), N(inita));
+    eosio::print("\nacc1 balance: ", acc1.balance, "\n");
+    return acc.balance > 0;
   }
 
   void store_vote(const opt_vote& vote) {
@@ -110,8 +115,6 @@ extern "C" {
           auto msg = eosio::current_message<opt_vote>();
           add_vote(msg);
 
-          account acc = get_account(N(currency), N(inita));
-          eosio::print("inita currency balance: ", acc.balance);
         }
       }
     }
