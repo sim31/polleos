@@ -17,7 +17,7 @@
        "name": "opt_token_poll_msg",
        "base": "opt_poll_msg",
        "fields": {
-         "token": "uint64",
+         "token": "account_name",
        }
     },{
       "name": "option_result",
@@ -33,7 +33,7 @@
         "question": "string",
         "results": "option_result[]",
         "tokenpoll": "uint8",
-        "token": "uint64",
+        "token": "account_name",
         }
       },{
         "name": "opt_vote",
