@@ -15,7 +15,7 @@
       }
     },{
        "name": "opt_token_poll_msg",
-       "base": "",
+       "base": "opt_poll_msg",
        "fields": {
          "token": "uint64",
          "stakeweighted": "bool"
@@ -60,7 +60,7 @@
     },{
       "action_name": "newtokenpoll",
       "type": "opt_token_poll_msg"
-    ,{
+    },{
       "action_name": "vote",
       "type": "opt_vote"
     }
@@ -74,7 +74,6 @@
       "key_types": [
         "uint64"
       ],
-      "type": "opt_poll"
     },
     {
       "table_name": "optvotes",
@@ -85,6 +84,7 @@
       "key_types": [
         "int64"
       ],
+      "type": "uint64"
     },
     {
       "table_name": "account",

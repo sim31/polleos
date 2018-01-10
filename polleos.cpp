@@ -38,9 +38,19 @@ namespace polleos {
     store_i64(vote.voter, N(optvotes), &vote.id, sizeof(poll_id));
   }
 
+  bool is_stakeholder(account_name acc_name, token_name token) {
+    //TODO:
+    return true;
+
+  }
+
   void store_vote(const opt_vote& vote) {
     opt_poll poll(vote.id);
     assert( get_poll(poll), "Poll with this id does not exist");
+    if ( poll.is_token_poll ) {
+      assert( is_stakeholder(vote.voter, poll.token ),
+              "Voter has to be a stakeholder of a token to participate in a poll");
+    }
     assert ( poll.add_vote(vote.option), "This option number does not exist for this poll");
     store_poll(poll);
     store_voter(vote);
@@ -51,19 +61,16 @@ namespace polleos {
   }
 
   
-    void set_poll_id(opt_poll& poll) {
+  void set_poll_id(opt_poll& poll) {
     poll_id buff[2];
     int32_t r = back_i64(CONTRACT_NAME_UINT64, CONTRACT_NAME_UINT64, N(optpoll), buff, sizeof(buff));
     poll.id = ( r > -1) ? buff[0] + 1 : 0;
   }
 
-  void create_poll(const opt_poll_msg& msg) {
-    validate_poll_msg(msg);
-    opt_poll poll = opt_poll(msg);
+  void add_poll(opt_poll& poll) {
     set_poll_id(poll);
     store_poll(poll);
   }
-
 
   void add_vote(const opt_vote& vote) {
     eosio::require_auth(vote.voter);
@@ -71,6 +78,7 @@ namespace polleos {
     assert( !has_voted(vote), "This account has already voted in this poll");
     store_vote(vote);
   }
+
 }
 
 using namespace polleos;
@@ -90,10 +98,14 @@ extern "C" {
       if (code == CONTRACT_NAME_UINT64) {
         if (action == N(newoptpoll)) {
           auto msg = eosio::current_message<opt_poll_msg>();
-          create_poll(msg);
+          validate_poll_msg(msg);
+          opt_poll poll = create_poll(msg);
+          add_poll(poll);
         } else if (action == N(newtokenpoll)) {
           auto msg = eosio::current_message<opt_token_poll_msg>();
-          create_poll(msg);
+          validate_poll_msg(msg);
+          opt_poll poll = create_poll(msg);
+          add_poll(poll);
         } else if (action == N(vote)) {
           auto msg = eosio::current_message<opt_vote>();
           add_vote(msg);

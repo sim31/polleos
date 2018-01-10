@@ -14,14 +14,14 @@ namespace polleos {
 
   const size_t max_options = 32;
 
-  struct PACKED (option) {
+  struct option {
     eosio::string name;
 
     option(eosio::string name) : name(name) {}
     option() {}
   };
 
-  struct PACKED (option_result) : option {
+  struct option_result : option {
     uint64_t votes = 0;
 
     option_result(const eosio::string& name, uint64_t votes) : option(name), votes(votes ) {}
@@ -32,32 +32,9 @@ namespace polleos {
 
   typedef option_result* results_array;
 
-  //@abi action newoptpoll
-  struct PACKED (opt_poll_msg) {
-    eosio::string question;
-    uint8_t options_len = 0;
-    option options[max_options];
-
-    bool is_valid() const {
-      //Check if question and all options have descriptions
-      if ( question.get_size() == 0 || options_len < 2)
-        return false;
-      for (int i = 0; i < options_len; i++) {
-        if ( options[i].name.get_size() == 0 )
-          return false;
-      }
-      return true;
-    }
-  };
-
-  //@abi action newtokenpoll
-  struct PACKED (opt_token_poll_msg) : opt_poll_msg {
-    token_name token;
-    bool stake_weighted;
-  };
 
   //@abi table
-  struct PACKED (opt_poll) {
+  struct opt_poll {
     poll_id id;
     eosio::string question;
     uint8_t results_len = 0;
@@ -67,15 +44,18 @@ namespace polleos {
     bool stake_weighted;
 
     opt_poll() {}
-    opt_poll(const opt_poll_msg& msg) : question(msg.question) {
-      set_options(msg.options, msg.options_len);
+    opt_poll(poll_id id) : id(id) {}
+
+    opt_poll(const eosio::string& question, const option* options, uint8_t options_len) : question(question) {
+      set_options(options, options_len);
     }
 
-    opt_poll(const opt_token_poll_msg& msg) : question(msg.question),
-        stake_weighted(msg.stake_weighted), token(msg.token), is_token_poll(true) {
-      set_options(msg.options, msg.options_len);
+    opt_poll(const eosio::string& question, const option* options, uint8_t options_len,
+             token_name token, bool stake_weighted) : question(question),
+      is_token_poll(true), token(token), stake_weighted(stake_weighted) {
+
+      set_options(options, options_len);
     }
-    opt_poll(poll_id id) : id(id) {}
 
     bool has_option(uint32_t option_num) const {
       return (option_num >= 1 && option_num <= results_len);
@@ -97,6 +77,39 @@ namespace polleos {
     }
   };
 
+  //@abi action newoptpoll
+  struct opt_poll_msg {
+    eosio::string question;
+    uint8_t options_len = 0;
+    option options[max_options];
+
+    bool is_valid() const {
+      //Check if question and all options have descriptions
+      if ( question.get_size() == 0 || options_len < 2)
+        return false;
+      for (int i = 0; i < options_len; i++) {
+        if ( options[i].name.get_size() == 0 )
+          return false;
+      }
+      return true;
+    }
+
+    opt_poll create_poll() const {
+      return opt_poll(question, options, options_len);
+    }
+  };
+
+  //@abi action newtokenpoll
+  struct opt_token_poll_msg : opt_poll_msg {
+    token_name token;
+    bool stake_weighted;
+
+    opt_poll create_poll() const {
+      return opt_poll(question, options, options_len, token, stake_weighted);
+    }
+  };
+
+
   //@abi action vote
   struct opt_vote {
     poll_id id;
@@ -107,6 +120,15 @@ namespace polleos {
       return option > 0 && option < max_options;
     }
   };
+
+  opt_poll create_poll(const opt_poll_msg& msg) {
+    return opt_poll(msg.question, msg.options, msg.options_len);
+  }
+
+  opt_poll create_poll(const opt_token_poll_msg& msg) {
+    return opt_poll(msg.question, msg.options, msg.options_len, msg.token, msg.stake_weighted);
+  }
+
 
   inline int32_t load_poll(poll_id id, table_name table, void* buffer, uint32_t size) {
     memcpy(buffer, &id, sizeof (poll_id));
