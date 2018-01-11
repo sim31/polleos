@@ -85,7 +85,7 @@ namespace polleos {
 
     bool is_valid() const {
       //Check if question and all options have descriptions
-      if ( question.get_size() == 0 || options_len < 2)
+      if ( question.get_size() == 0 || options_len < 1)
         return false;
       for (int i = 0; i < options_len; i++) {
         if ( options[i].name.get_size() == 0 )
