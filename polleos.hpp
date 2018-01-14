@@ -5,8 +5,8 @@
 #include <eoslib/string.hpp>
 #include <currency.hpp>
 
-#define CONTRACT_NAME polleos1
-#define CONTRACT_NAME_UINT64 N(polleos1)
+#define CONTRACT_NAME polleos
+#define CONTRACT_NAME_UINT64 N(polleos)
 
 namespace polleos {
 
