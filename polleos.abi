@@ -7,15 +7,15 @@
         "name": "string"
       }
     },{
-      "name": "opt_poll_msg",
+      "name": "newoptpoll",
       "base": "",
       "fields": {
         "question": "string",
         "options": "string[]"
       }
     },{
-       "name": "opt_token_poll_msg",
-       "base": "opt_poll_msg",
+       "name": "newtokenpoll",
+       "base": "newoptpoll",
        "fields": {
          "token": "account_name",
        }
@@ -36,7 +36,7 @@
         "token": "account_name",
         }
       },{
-        "name": "opt_vote",
+        "name": "vote",
         "base": "",
         "fields": {
           "id": "uint64",
@@ -54,13 +54,13 @@
     ],
   "actions": [{
       "action_name": "newoptpoll",
-      "type": "opt_poll_msg"
+      "type": "newoptpoll"
     },{
       "action_name": "newtokenpoll",
-      "type": "opt_token_poll_msg"
+      "type": "newtokenpoll"
     },{
       "action_name": "vote",
-      "type": "opt_vote"
+      "type": "vote"
     }
   ],
   "tables": [{
