@@ -32,11 +32,11 @@ class polleos : public eosio::contract {
 
       //@abi table
       struct poll {
-         poll_id id;
-         std::string question;
+         poll_id                    id;
+         std::string                question;
          std::vector<option_result> results;
-         bool is_token_poll = false;
-         token_name token;
+         bool                       is_token_poll = false;
+         token_name                 token;
 
          uint64_t primary_key() const {
             return id;
@@ -53,9 +53,21 @@ class polleos : public eosio::contract {
          EOSLIB_SERIALIZE(poll, (id)(question)(results)(is_token_poll)(token))
       };
 
+      //@abi table
+      struct poll_vote {
+         poll_id id;
+
+         uint64_t primary_key() {
+            return id;
+         }
+
+         EOSLIB_SERIALIZE( poll_vote,(id))
+      };
+
       typedef eosio::multi_index<N(poll), poll, eosio::indexed_by<
          N(reverse), eosio::const_mem_fun<poll, uint64_t, &poll::get_reverse_key>
        > > poll_table;
+      typedef eosio::multi_index<N(votes), poll_vote> vote_table;
 
       //@abi action
       void newpoll(const std::string& question,
@@ -65,7 +77,7 @@ class polleos : public eosio::contract {
                         const std::vector<std::string>& option_names,
                         token_name token);
       //@abi action
-      void vote(poll_id id, account_name voter, uint32_t option_number);
+      void vote(poll_id id, account_name voter, uint32_t option_id);
 
    private:
       void store_poll(const std::string& question,

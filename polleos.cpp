@@ -45,8 +45,30 @@ void polleos::newtokenpoll(const std::string& question,
 }
 
 void polleos::vote(polleos::poll_id id, account_name voter,
-                   uint32_t option_number) {
+                   uint32_t option_id) {
+   //TODO: Implement voting in token polls
+   eosio::require_auth(voter);
 
+   poll_table polls(get_self(), get_self());
+   const poll& p = polls.get(id, "Poll with this id does not exist");
+
+   eosio_assert( option_id < p.results.size(),
+           "Option with this id does not exist" );
+
+   vote_table votes(get_self(), voter);
+   eosio_assert( votes.find(id) == votes.end(),  "This account has already voted "
+                                                 "in this poll");
+   //TODO: Make poll creator pay?
+   votes.emplace(get_self(), [&](poll_vote& v) {
+      v.id = id;
+   });
+
+   polls.modify(p, get_self(), [&](poll& p) {
+      //FIXME: Check for overflows
+      p.results[option_id].votes++;
+   });
+
+   eosio::print("Voted stored");
 }
 
 EOSIO_ABI( polleos, (newpoll)(newtokenpoll)(vote) )
