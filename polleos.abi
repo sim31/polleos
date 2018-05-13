@@ -1,96 +1,39 @@
 {
-  "types": [],
+  "types": [{
+      "new_type_name": "account_name",
+      "type": "name"
+    }
+  ],
   "structs": [{
-      "name": "option",
+      "name": "transfer",
       "base": "",
-      "fields": {
-        "name": "string"
-      }
+      "fields": [
+        {"name":"from", "type":"account_name"},
+        {"name":"to", "type":"account_name"},
+        {"name":"amount", "type":"uint64"}
+      ]
     },{
-      "name": "newoptpoll",
+      "name": "account",
       "base": "",
-      "fields": {
-        "question": "string",
-        "options": "string[]"
-      }
-    },{
-       "name": "newtokenpoll",
-       "base": "newoptpoll",
-       "fields": {
-         "token": "account_name",
-       }
-    },{
-      "name": "option_result",
-      "base": "option",
-      "fields": {
-        "votes": "uint64"
-      }
-    },{
-      "name": "opt_poll",
-      "base": "",
-      "fields": {
-        "id": "uint64"
-        "question": "string",
-        "results": "option_result[]",
-        "tokenpoll": "uint8",
-        "token": "account_name",
-        }
-      },{
-        "name": "vote",
-        "base": "",
-        "fields": {
-          "id": "uint64",
-          "voter": "account_name",
-          "option": "int32"
-        }
-      },{
-        "name": "account",
-        "base": "",
-        "fields": {
-          "key": "name",
-          "balance": "uint64"
-        }
-      }
-    ],
+      "fields": [
+        {"name":"account", "type":"name"},
+        {"name":"balance", "type":"uint64"}
+      ]
+    }
+  ],
   "actions": [{
-      "action_name": "newoptpoll",
-      "type": "newoptpoll"
-    },{
-      "action_name": "newtokenpoll",
-      "type": "newtokenpoll"
-    },{
-      "action_name": "vote",
-      "type": "vote"
+      "name": "transfer",
+      "type": "transfer",
+      "ricardian_contract": ""
     }
   ],
   "tables": [{
-      "table_name": "optpoll",
-      "index_type": "i64",
-      "key_names": [
-        "id"
-      ],
-      "key_types": [
-        "uint64"
-      ],
-      "type": "opt_poll"
-    },
-    {
-      "table_name": "optvotes",
-      "index_type": "i64",
-      "key_names": [
-        "id"
-      ],
-      "key_types": [
-        "int64"
-      ],
-      "type": "uint64"
-    },
-    {
-      "table_name": "account",
+      "name": "account",
       "type": "account",
       "index_type": "i64",
-      "key_names" : ["key"],
+      "key_names" : ["account"],
       "key_types" : ["name"]
     }
-  ]
+  ],
+  "ricardian_clauses": []
 }

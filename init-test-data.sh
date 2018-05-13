@@ -26,12 +26,12 @@ done
 
 vote_cmd="eosc push message polleos vote"
 
-#$vote_cmd '{"id": 1, "option": 1, "voter": "inita"}' -S polleos,inita -p inita@active
-#$vote_cmd '{"id": 0, "option": 2, "voter": "inita"}' -S polleos,inita -p inita@active
-#$vote_cmd '{"id": 1, "option": 2, "voter": "initb"}' -S polleos,initb -p initb@active
-#$vote_cmd '{"id": 0, "option": 3, "voter": "initb"}' -S polleos,initb -p initb@active
-#$vote_cmd '{"id": 3, "option": 1, "voter": "initb"}' -S polleos,initb -p initb@active
-#$vote_cmd '{"id": 5, "option": 1, "voter": "initb"}' -S polleos,initb -p initb@active
+$vote_cmd '{"id": 1, "option": 1, "voter": "inita"}' -S polleos,inita -p inita@active
+$vote_cmd '{"id": 0, "option": 2, "voter": "inita"}' -S polleos,inita -p inita@active
+$vote_cmd '{"id": 1, "option": 2, "voter": "initb"}' -S polleos,initb -p initb@active
+$vote_cmd '{"id": 0, "option": 3, "voter": "initb"}' -S polleos,initb -p initb@active
+$vote_cmd '{"id": 3, "option": 1, "voter": "initb"}' -S polleos,initb -p initb@active
+$vote_cmd '{"id": 5, "option": 1, "voter": "initb"}' -S polleos,initb -p initb@active
 
 echo ""
 echo "Poll table:"
