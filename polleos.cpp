@@ -2,7 +2,7 @@
 
 void polleos::poll::set(polleos::poll_id id, const std::string& question,
                         const option_names& options, bool is_token_poll,
-                        token_name token) {
+                        token_info token) {
    eosio_assert( !question.empty(), "Question can't be empty" );
 
    this->id = id;
@@ -18,7 +18,7 @@ void polleos::poll::set(polleos::poll_id id, const std::string& question,
 }
 
 void polleos::store_poll(const std::string& question, const option_names& options,
-                         bool is_token_poll, token_name token) {
+                         bool is_token_poll, token_info token) {
 
    poll_table polls(get_self(), get_self());
    poll_id id;
@@ -33,13 +33,13 @@ void polleos::store_poll(const std::string& question, const option_names& option
 }
 
 void polleos::newpoll(const std::string& question, const option_names& options) {
-
-   store_poll(question, options, false, 0);
+   store_poll(question, options, false, token_info());
 }
 
 void polleos::newtokenpoll(const std::string& question, const option_names& options,
-                           token_name token) {
-   //TODO: Check if token exists
+                           token_info token) {
+
+   eosio_assert( token_exists(token), "This token does not exist" );
    store_poll(question, options, true, token);
 }
 

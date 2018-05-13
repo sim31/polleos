@@ -1,6 +1,7 @@
 #pragma once
 
 #include <eosiolib/eosio.hpp>
+#include <eosiolib/currency.hpp>
 
 class polleos : public eosio::contract {
    public:
@@ -33,13 +34,20 @@ class polleos : public eosio::contract {
 
       typedef std::vector<option_result> option_results;
 
+      struct token_info {
+         account_name       code;
+         eosio::symbol_name symbol;
+
+         EOSLIB_SERIALIZE( token_info, (code)(symbol) )
+      };
+
       //@abi table
       struct poll {
          poll_id        id;
          std::string    question;
          option_results results;
          bool           is_token_poll = false;
-         token_name     token;
+         token_info     token;
 
          uint64_t primary_key() const {
             return id;
@@ -51,7 +59,7 @@ class polleos : public eosio::contract {
 
          void set(poll_id id, const std::string& question,
                   const option_names& options, bool is_token_poll,
-                  token_name token);
+                  token_info token);
 
          EOSLIB_SERIALIZE(poll, (id)(question)(results)(is_token_poll)(token))
       };
@@ -78,13 +86,18 @@ class polleos : public eosio::contract {
       //@abi action
       void newtokenpoll(const std::string& question,
                         const std::vector<std::string>& options,
-                        token_name token);
+                        token_info token);
       //@abi action
       void vote(poll_id id, account_name voter, uint32_t option_id);
+
+      static bool token_exists(token_info token) {
+         eosio::currency::stats st(token.code, token.symbol);
+         return st.find(token.symbol) != st.end();
+      }
 
    private:
       void store_poll(const std::string& question,
                       const option_names& options,
-                      bool is_token_poll, token_name token);
+                      bool is_token_poll, token_info token);
 
 };
