@@ -1,15 +1,19 @@
-#include <eosiolib/eosio.hpp>
+#include "polleos.hpp"
 
-using namespace eosio;
+void polleos::newpoll(std::string question, std::vector<std::string> options) {
+   eosio::print("Helllo!");
+}
 
-class hello : public eosio::contract {
-  public:
-      using contract::contract;
+void polleos::newtokenpoll(std::string question,
+                           std::vector<std::string> options,
+                           token_name token) {
 
-      /// @abi action 
-      void hi( account_name user ) {
-         print( "Hello, ", name{user} );
-      }
-};
+}
 
-EOSIO_ABI( hello, (hi) )
+void polleos::vote(polleos::poll_id id, account_name voter,
+                   uint32_t option_number) {
+
+}
+
+EOSIO_ABI( polleos, (newpoll)(newtokenpoll)(vote) )
+
