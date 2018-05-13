@@ -1,7 +1,6 @@
 #pragma once
 
 #include <eosiolib/eosio.hpp>
-#include <libc++/upstream/include/regex>
 
 class polleos : public eosio::contract {
    public:
@@ -28,7 +27,7 @@ class polleos : public eosio::contract {
          option_result(const option& opt) : option(opt), votes(0) {}
          option_result() {}
 
-         EOSLIB_SERIALIZE(option_result, (votes))
+         EOSLIB_SERIALIZE(option_result, (name)(votes))
       };
 
       //@abi table
@@ -39,11 +38,11 @@ class polleos : public eosio::contract {
          bool is_token_poll = false;
          token_name token;
 
-         uint64_t get_primary_key() {
+         uint64_t primary_key() const {
             return id;
          }
 
-         uint64_t get_reverse_key() {
+         uint64_t get_reverse_key() const {
             return ~id;
          }
 
