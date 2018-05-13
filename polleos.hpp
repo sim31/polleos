@@ -4,7 +4,8 @@
 
 class polleos : public eosio::contract {
    public:
-      typedef uint64_t poll_id;
+      typedef uint64_t                 poll_id;
+      typedef std::vector<std::string> option_names;
 
       polleos(account_name contract_name) : eosio::contract(contract_name) {}
 
@@ -30,13 +31,15 @@ class polleos : public eosio::contract {
          EOSLIB_SERIALIZE(option_result, (name)(votes))
       };
 
+      typedef std::vector<option_result> option_results;
+
       //@abi table
       struct poll {
-         poll_id                    id;
-         std::string                question;
-         std::vector<option_result> results;
-         bool                       is_token_poll = false;
-         token_name                 token;
+         poll_id        id;
+         std::string    question;
+         option_results results;
+         bool           is_token_poll = false;
+         token_name     token;
 
          uint64_t primary_key() const {
             return id;
@@ -47,7 +50,7 @@ class polleos : public eosio::contract {
          }
 
          void set(poll_id id, const std::string& question,
-                  const std::vector<std::string>& options, bool is_token_poll,
+                  const option_names& options, bool is_token_poll,
                   token_name token);
 
          EOSLIB_SERIALIZE(poll, (id)(question)(results)(is_token_poll)(token))
@@ -71,17 +74,17 @@ class polleos : public eosio::contract {
 
       //@abi action
       void newpoll(const std::string& question,
-                   const std::vector<std::string>& option_names);
+                   const std::vector<std::string>& options);
       //@abi action
       void newtokenpoll(const std::string& question,
-                        const std::vector<std::string>& option_names,
+                        const std::vector<std::string>& options,
                         token_name token);
       //@abi action
       void vote(poll_id id, account_name voter, uint32_t option_id);
 
    private:
       void store_poll(const std::string& question,
-                      const std::vector<std::string>& options,
+                      const option_names& options,
                       bool is_token_poll, token_name token);
 
 };

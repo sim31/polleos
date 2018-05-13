@@ -1,8 +1,10 @@
 #include "polleos.hpp"
 
 void polleos::poll::set(polleos::poll_id id, const std::string& question,
-                        const std::vector<std::string>& options, bool is_token_poll,
+                        const option_names& options, bool is_token_poll,
                         token_name token) {
+   eosio_assert( !question.empty(), "Question can't be empty" );
+
    this->id = id;
    this->question = question;
    this->is_token_poll = is_token_poll;
@@ -10,14 +12,13 @@ void polleos::poll::set(polleos::poll_id id, const std::string& question,
    results.resize(options.size());
    std::transform(options.begin(), options.end(), results.begin(),
                   [&](std::string str) {
+                     eosio_assert( !str.empty(), "Option names can't be empty");
                      return option_result(str);
                   });
 }
 
-void polleos::store_poll(const std::string& question,
-                         const std::vector<std::string>& options,
+void polleos::store_poll(const std::string& question, const option_names& options,
                          bool is_token_poll, token_name token) {
-   //TODO: check if message is valid
 
    poll_table polls(get_self(), get_self());
    poll_id id;
@@ -31,17 +32,15 @@ void polleos::store_poll(const std::string& question,
    eosio::print("Poll stored with id: ", id);
 }
 
-void polleos::newpoll(const std::string& question,
-                      const std::vector<std::string>& option_names) {
+void polleos::newpoll(const std::string& question, const option_names& options) {
 
-   store_poll(question, option_names, false, 0);
+   store_poll(question, options, false, 0);
 }
 
-void polleos::newtokenpoll(const std::string& question,
-                           const std::vector<std::string>& option_names,
+void polleos::newtokenpoll(const std::string& question, const option_names& options,
                            token_name token) {
    //TODO: Check if token exists
-   store_poll(question, option_names, true, token);
+   store_poll(question, options, true, token);
 }
 
 void polleos::vote(polleos::poll_id id, account_name voter,
