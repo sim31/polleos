@@ -46,19 +46,30 @@ class polleos : public eosio::contract {
             return ~id;
          }
 
+         void set(poll_id id, const std::string& question,
+                  const std::vector<std::string>& options, bool is_token_poll,
+                  token_name token);
+
          EOSLIB_SERIALIZE(poll, (id)(question)(results)(is_token_poll)(token))
       };
 
       typedef eosio::multi_index<N(poll), poll, eosio::indexed_by<
          N(reverse), eosio::const_mem_fun<poll, uint64_t, &poll::get_reverse_key>
-       > > polls;
+       > > poll_table;
 
       //@abi action
-      void newpoll(std::string question, std::vector<std::string> option_names);
+      void newpoll(const std::string& question,
+                   const std::vector<std::string>& option_names);
       //@abi action
-      void newtokenpoll(std::string question, std::vector<std::string> option_names,
+      void newtokenpoll(const std::string& question,
+                        const std::vector<std::string>& option_names,
                         token_name token);
       //@abi action
       void vote(poll_id id, account_name voter, uint32_t option_number);
+
+   private:
+      void store_poll(const std::string& question,
+                      const std::vector<std::string>& options,
+                      bool is_token_poll, token_name token);
 
 };
