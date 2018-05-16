@@ -65,7 +65,7 @@ add_custom_command(OUTPUT ${CONTRACT_WAST_FILE}
         DEPENDS ${CONTRACT_ASSEMBLY_FILE})
 
 
-add_custom_target(abi ALL
+add_custom_target(abi
         DEPENDS ${CONTRACT_ABI_FILE})
 add_custom_command(OUTPUT ${CONTRACT_ABI_FILE}
         COMMAND ${EOSIOCPP_PATH}

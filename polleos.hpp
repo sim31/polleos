@@ -2,11 +2,13 @@
 
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/currency.hpp>
+#include "../../../../../../usr/local/include/eosiolib/asset.hpp"
 
 class polleos : public eosio::contract {
    public:
       typedef uint64_t                 poll_id;
       typedef std::vector<std::string> option_names;
+      typedef eosio::extended_symbol   token_info;
 
       polleos(account_name contract_name) : eosio::contract(contract_name) {}
 
@@ -26,20 +28,12 @@ class polleos : public eosio::contract {
          option_result(const std::string& name, uint64_t votes) : option(name),
                                                                   votes(0) {}
          option_result(const std::string& name) : option_result(name, 0) {}
-         option_result(const option& opt) : option(opt), votes(0) {}
          option_result() {}
 
          EOSLIB_SERIALIZE(option_result, (name)(votes))
       };
 
       typedef std::vector<option_result> option_results;
-
-      struct token_info {
-         account_name       code;
-         eosio::symbol_name symbol;
-
-         EOSLIB_SERIALIZE( token_info, (code)(symbol) )
-      };
 
       //@abi table
       struct poll {
@@ -91,8 +85,9 @@ class polleos : public eosio::contract {
       void vote(poll_id id, account_name voter, uint32_t option_id);
 
       static bool token_exists(token_info token) {
-         eosio::currency::stats st(token.code, token.symbol);
-         return st.find(token.symbol) != st.end();
+         auto sym_name = token.name();
+         eosio::currency::stats st(token.contract, sym_name);
+         return st.find(sym_name) != st.end();
       }
 
    private:

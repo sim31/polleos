@@ -1,38 +1,153 @@
 {
   "types": [{
-      "new_type_name": "account_name",
-      "type": "name"
+      "new_type_name": "poll_id",
+      "type": "uint64"
+    },{
+      "new_type_name": "option_results",
+      "type": "option_result[]"
+    },{
+      "new_type_name": "token_info",
+      "type": "extended_symbol"
+    },{
+      "new_type_name": "symbol_name",
+      "type": "symbol"
     }
   ],
   "structs": [{
-      "name": "transfer",
+      "name": "option",
       "base": "",
-      "fields": [
-        {"name":"from", "type":"account_name"},
-        {"name":"to", "type":"account_name"},
-        {"name":"amount", "type":"uint64"}
+      "fields": [{
+          "name": "name",
+          "type": "string"
+        }
       ]
     },{
-      "name": "account",
+      "name": "option_result",
+      "base": "option",
+      "fields": [{
+          "name": "votes",
+          "type": "uint64"
+        }
+      ]
+    },{
+      "name": "symbol_type",
       "base": "",
-      "fields": [
-        {"name":"account", "type":"name"},
-        {"name":"balance", "type":"uint64"}
+      "fields": [{
+          "name": "value",
+          "type": "symbol_name"
+        }
+      ]
+    },{
+      "name": "extended_symbol",
+      "base": "symbol_type",
+      "fields": [{
+          "name": "contract",
+          "type": "account_name"
+        }
+      ]
+    },{
+      "name": "poll",
+      "base": "",
+      "fields": [{
+          "name": "id",
+          "type": "poll_id"
+        },{
+          "name": "question",
+          "type": "string"
+        },{
+          "name": "results",
+          "type": "option_results"
+        },{
+          "name": "is_token_poll",
+          "type": "bool"
+        },{
+          "name": "token",
+          "type": "token_info"
+        }
+      ]
+    },{
+      "name": "poll_vote",
+      "base": "",
+      "fields": [{
+          "name": "id",
+          "type": "poll_id"
+        }
+      ]
+    },{
+      "name": "newpoll",
+      "base": "",
+      "fields": [{
+          "name": "question",
+          "type": "string"
+        },{
+          "name": "options",
+          "type": "string[]"
+        }
+      ]
+    },{
+      "name": "newtokenpoll",
+      "base": "",
+      "fields": [{
+          "name": "question",
+          "type": "string"
+        },{
+          "name": "options",
+          "type": "string[]"
+        },{
+          "name": "token",
+          "type": "token_info"
+        }
+      ]
+    },{
+      "name": "vote",
+      "base": "",
+      "fields": [{
+          "name": "id",
+          "type": "poll_id"
+        },{
+          "name": "voter",
+          "type": "account_name"
+        },{
+          "name": "option_id",
+          "type": "uint32"
+        }
       ]
     }
   ],
   "actions": [{
-      "name": "transfer",
-      "type": "transfer",
+      "name": "newpoll",
+      "type": "newpoll",
+      "ricardian_contract": ""
+    },{
+      "name": "newtokenpoll",
+      "type": "newtokenpoll",
+      "ricardian_contract": ""
+    },{
+      "name": "vote",
+      "type": "vote",
       "ricardian_contract": ""
     }
   ],
   "tables": [{
-      "name": "account",
-      "type": "account",
+      "name": "poll",
       "index_type": "i64",
-      "key_names" : ["account"],
-      "key_types" : ["name"]
+      "key_names": [
+        "id"
+      ],
+      "key_types": [
+        "poll_id"
+      ],
+      "type": "poll"
+    },{
+      "name": "pollvote",
+      "index_type": "i64",
+      "key_names": [
+        "id"
+      ],
+      "key_types": [
+        "poll_id"
+      ],
+      "type": "poll_vote"
     }
   ],
   "ricardian_clauses": []

@@ -5,9 +5,10 @@ void polleos::poll::set(polleos::poll_id id, const std::string& question,
                         token_info token) {
    eosio_assert( !question.empty(), "Question can't be empty" );
 
-   this->id = id;
-   this->question = question;
+   this->id            = id;
+   this->question      = question;
    this->is_token_poll = is_token_poll;
+   this->token         = token;
 
    results.resize(options.size());
    std::transform(options.begin(), options.end(), results.begin(),
