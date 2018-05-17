@@ -26,7 +26,7 @@
       "base": "option",
       "fields": [{
           "name": "votes",
-          "type": "uint64"
+          "type": "float64"
         }
       ]
     },{

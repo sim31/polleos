@@ -2,6 +2,7 @@
 
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/currency.hpp>
+#include <cmath>
 
 class polleos : public eosio::contract {
    public:
@@ -23,9 +24,8 @@ class polleos : public eosio::contract {
       };
 
       struct option_result : option {
-         uint64_t votes = 0;
+         double votes = 0;
 
-         //FIXME: will you use these constructors?
          option_result(const std::string &name, uint64_t votes) : option(name),
                                                                   votes(0) {}
 
@@ -105,9 +105,13 @@ class polleos : public eosio::contract {
                       bool is_token_poll, token_info token);
 
       void store_vote(const poll &p, vote_table &votes, uint32_t option_id,
-                      uint64_t weight);
+                      double weight);
 
       void store_token_vote(const poll &p, vote_table &votes, uint32_t option_id);
+
+      double to_weight(const eosio::asset& stake) {
+         return stake.amount / std::pow(10, stake.symbol.precision());
+      }
 
       poll_table _polls;
 };

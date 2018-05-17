@@ -35,9 +35,9 @@ void polleos::store_poll(const std::string &question, const option_names &option
 }
 
 void polleos::store_vote(const polleos::poll &p, polleos::vote_table &votes,
-                         uint32_t option_id, uint64_t weight) {
+                         uint32_t option_id, double weight) {
 
-   eosio_assert(weight > 0, "Vote weight cannot be less than 1. Contract logic issue");
+   eosio_assert(weight > 0, "Vote weight cannot be less than 0. Contract logic issue");
 
    //TODO: Make poll creator pay?
    votes.emplace(get_self(), [&](poll_vote &v) {
@@ -45,21 +45,24 @@ void polleos::store_vote(const polleos::poll &p, polleos::vote_table &votes,
    });
 
    _polls.modify(p, get_self(), [&](poll &p) {
-      //FIXME: Check for overflows
       p.results[option_id].votes += weight;
    });
 }
 
 void polleos::store_token_vote(const polleos::poll &p, polleos::vote_table &votes,
                                uint32_t option_id) {
+
    eosio::currency::accounts accounts(p.token.contract, votes.get_scope());
    eosio::currency::account  acc = accounts.get(p.token.name(),
                                                 "Voter has to be a stakeholder of a "
                                                 "token to participate in a token poll");
+
+   eosio_assert(acc.balance.is_valid(), "Balance of voter account is invalid. Something"
+                                        " wrong with token contract.");
    eosio_assert(acc.balance.amount > 0,
                 "Voter has to have more than 0 of tokens to participate in a poll");
 
-   store_vote(p, votes, option_id, acc.balance.amount);
+   store_vote(p, votes, option_id, to_weight(acc.balance));
 }
 
 void polleos::newpoll(const std::string &question, const option_names &options) {
