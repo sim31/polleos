@@ -139,7 +139,7 @@
       ],
       "type": "poll"
     },{
-      "name": "pollvote",
+      "name": "votes",
       "index_type": "i64",
       "key_names": [
         "id"

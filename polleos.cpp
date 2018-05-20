@@ -95,7 +95,7 @@ void polleos::vote(polleos::poll_id id, account_name voter, uint32_t option_id) 
    else
       store_vote(p, votes, option_id, 1);
 
-   eosio::print("Vote stored");
+   eosio::print("Vote stored!");
 }
 
 EOSIO_ABI(polleos, (newpoll)(newtokenpoll)(vote))

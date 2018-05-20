@@ -63,7 +63,7 @@ class polleos : public eosio::contract {
          EOSLIB_SERIALIZE(poll, (id)(question)(results)(is_token_poll)(token))
       };
 
-      //@abi table
+      //@abi table votes
       struct poll_vote {
          poll_id id;
 
