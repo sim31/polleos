@@ -26,8 +26,7 @@ void polleos::store_poll(const std::string& question, account_name poll_owner,
    poll_table polls(get_self(), poll_owner);
    poll_id    id;
 
-   //FIXME: Make sender of action payer.
-   polls.emplace(get_self(), [&](poll& p) {
+   polls.emplace(poll_owner, [&](poll& p) {
       id = polls.available_primary_key();
       p.set(id, question, options, is_token_poll, token);
    });
@@ -40,14 +39,14 @@ void polleos::store_vote(const polleos::poll& p, polleos::poll_table& polls,
 
    eosio_assert(weight > 0, "Vote weight cannot be less than 0. Contract logic issue");
 
-   //TODO: Make poll creator pay?
-   votes.emplace(get_self(), [&](poll_vote& v) {
+   // Voter (votes.get_scope()) pays
+   votes.emplace(votes.get_scope(), [&](poll_vote& v) {
       v.vote_id = votes.available_primary_key();
       v.poll_id = p.id;
       v.poll_owner = polls.get_scope();
    });
 
-   polls.modify(p, get_self(), [&](poll& p) {
+   polls.modify(p, votes.get_scope(), [&](poll& p) {
       p.results[option_id].votes += weight;
    });
 }
