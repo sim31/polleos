@@ -41,9 +41,10 @@ void polleos::store_vote(const polleos::poll& p, polleos::poll_table& polls,
 
    // Voter (votes.get_scope()) pays
    votes.emplace(votes.get_scope(), [&](poll_vote& v) {
-      v.vote_id = votes.available_primary_key();
-      v.poll_id = p.id;
+      v.vote_id    = votes.available_primary_key();
+      v.poll_id    = p.id;
       v.poll_owner = polls.get_scope();
+      v.option_id  = option_id;
    });
 
    polls.modify(p, votes.get_scope(), [&](poll& p) {

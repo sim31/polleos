@@ -67,6 +67,7 @@ class polleos : public eosio::contract {
          uint64_t     vote_id;   // opaque, using available_primary_key()
          poll_id      poll_id;
          account_name poll_owner;
+         uint32_t     option_id;
 
          uint64_t primary_key() const {
 
@@ -83,7 +84,7 @@ class polleos : public eosio::contract {
             return key;
          }
 
-         EOSLIB_SERIALIZE(poll_vote, (vote_id)(poll_id)(poll_owner))
+         EOSLIB_SERIALIZE(poll_vote, (vote_id)(poll_id)(poll_owner)(option_id))
       };
 
       typedef eosio::multi_index<N(poll), poll, eosio::indexed_by<
