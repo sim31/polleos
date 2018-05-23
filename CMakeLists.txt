@@ -45,6 +45,7 @@ target_link_libraries(link
 set(CONTRACT_ASSEMBLY_FILE ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.s)
 set(CONTRACT_WAST_FILE ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.wast)
 set(CONTRACT_ABI_FILE ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.abi)
+set(CONTRACT_ABI_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}.abi)
 
 add_custom_target(assembly ALL
         DEPENDS link)
@@ -65,10 +66,18 @@ add_custom_command(OUTPUT ${CONTRACT_WAST_FILE}
         DEPENDS ${CONTRACT_ASSEMBLY_FILE})
 
 
-add_custom_target(abi
+# Currently we don't generate abi, because it does not recognize symbol types.
+# Instead we just copy our own .abi file from source into build dir
+#add_custom_target(abi
+#        DEPENDS ${CONTRACT_ABI_FILE})
+#add_custom_command(OUTPUT ${CONTRACT_ABI_FILE}
+#        COMMAND ${EOSIOCPP_PATH}
+#        -g ${CONTRACT_ABI_FILE}
+#        ${CPP_FILES}
+#        DEPENDS ${CPP_FILES} ${HPP_FILES})
+
+add_custom_target(abi-copy ALL
         DEPENDS ${CONTRACT_ABI_FILE})
 add_custom_command(OUTPUT ${CONTRACT_ABI_FILE}
-        COMMAND ${EOSIOCPP_PATH}
-        -g ${CONTRACT_ABI_FILE}
-        ${CPP_FILES}
-        DEPENDS ${CPP_FILES} ${HPP_FILES})
+        COMMAND cp ${CONTRACT_ABI_SRC} ${CONTRACT_ABI_FILE}
+        DEPENDS ${CONTRACT_ABI_SRC})

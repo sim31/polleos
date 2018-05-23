@@ -10,8 +10,7 @@ class polleos : public eosio::contract {
       typedef std::vector<std::string> option_names;
       typedef eosio::extended_symbol   token_info;
 
-      polleos(account_name contract_name) : eosio::contract(contract_name),
-                                            _polls(get_self(), get_self()) {}
+      polleos(account_name contract_name) : eosio::contract(contract_name) {}
 
       struct option {
          std::string name;
@@ -26,10 +25,10 @@ class polleos : public eosio::contract {
       struct option_result : option {
          double votes = 0;
 
-         option_result(const std::string &name, uint64_t votes) : option(name),
+         option_result(const std::string& name, uint64_t votes) : option(name),
                                                                   votes(0) {}
 
-         option_result(const std::string &name) : option_result(name, 0) {}
+         option_result(const std::string& name) : option_result(name, 0) {}
 
          option_result() {}
 
@@ -56,8 +55,8 @@ class polleos : public eosio::contract {
             return ~id;
          }
 
-         void set(poll_id id, const std::string &question,
-                  const option_names &options, bool is_token_poll,
+         void set(poll_id id, const std::string& question,
+                  const option_names& options, bool is_token_poll,
                   token_info token);
 
          EOSLIB_SERIALIZE(poll, (id)(question)(results)(is_token_poll)(token))
@@ -65,53 +64,69 @@ class polleos : public eosio::contract {
 
       //@abi table votes
       struct poll_vote {
-         poll_id id;
+         uint64_t     vote_id;   // opaque, using available_primary_key()
+         poll_id      poll_id;
+         account_name poll_owner;
 
-         uint64_t primary_key() {
+         uint64_t primary_key() const {
 
-            return id;
+            return vote_id;
          }
 
-         EOSLIB_SERIALIZE(poll_vote, (id))
+         uint128_t owner_poll_key() const {
+            return get_owner_poll_key(poll_owner, poll_id);
+         }
+
+         static uint128_t get_owner_poll_key(account_name owner, polleos::poll_id id) {
+            uint128_t key = owner;
+            *(reinterpret_cast<uint64_t*>(&key) + 1) = id;
+            return key;
+         }
+
+         EOSLIB_SERIALIZE(poll_vote, (vote_id)(poll_id)(poll_owner))
       };
 
       typedef eosio::multi_index<N(poll), poll, eosio::indexed_by<
          N(reverse), eosio::const_mem_fun<poll, uint64_t, &poll::get_reverse_key>
-      > >                                             poll_table;
-      typedef eosio::multi_index<N(votes), poll_vote> vote_table;
+      > > poll_table;
+
+      typedef eosio::multi_index<N(votes), poll_vote, eosio::indexed_by<
+         N(ownerpoll), eosio::const_mem_fun<poll_vote, uint128_t, &poll_vote::owner_poll_key>
+      > > vote_table;
 
       //@abi action
-      void newpoll(const std::string &question,
-                   const std::vector<std::string> &options);
+      void newpoll(const std::string& question, account_name owner,
+                   const std::vector<std::string>& options);
 
       //@abi action
-      void newtokenpoll(const std::string &question,
-                        const std::vector<std::string> &options,
+      void newtokenpoll(const std::string& question, account_name owner,
+                        const std::vector<std::string>& options,
                         token_info token);
 
       //@abi action
-      void vote(poll_id id, account_name voter, uint32_t option_id);
+      void vote(poll_id id, account_name poll_owner, account_name voter,
+                uint32_t option_id);
 
       static bool token_exists(token_info token) {
 
-         auto sym_name = token.name();
+         auto                   sym_name = token.name();
          eosio::currency::stats st(token.contract, sym_name);
          return st.find(sym_name) != st.end();
       }
 
    private:
-      void store_poll(const std::string &question,
-                      const option_names &options,
+      void store_poll(const std::string& question, account_name owner,
+                      const option_names& options,
                       bool is_token_poll, token_info token);
 
-      void store_vote(const poll &p, vote_table &votes, uint32_t option_id,
-                      double weight);
+      void store_vote(const poll& p, poll_table& polls, vote_table& votes,
+                      uint32_t option_id, double weight);
 
-      void store_token_vote(const poll &p, vote_table &votes, uint32_t option_id);
+      void store_token_vote(const poll& p, poll_table& poll, vote_table& votes,
+                            uint32_t option_id);
 
       double to_weight(const eosio::asset& stake) {
+
          return stake.amount / std::pow(10, stake.symbol.precision());
       }
-
-      poll_table _polls;
 };

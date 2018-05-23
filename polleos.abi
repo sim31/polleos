@@ -69,8 +69,14 @@
       "name": "poll_vote",
       "base": "",
       "fields": [{
-          "name": "id",
+          "name": "voteid",
+          "type": "uint64"
+        },{
+          "name": "pollid",
           "type": "poll_id"
+        },{
+          "name": "pollowner",
+          "type": "account_name"
         }
       ]
     },{
@@ -79,6 +85,9 @@
       "fields": [{
           "name": "question",
           "type": "string"
+        },{
+          "name": "owner",
+          "type": "account_name"
         },{
           "name": "options",
           "type": "string[]"
@@ -90,6 +99,9 @@
       "fields": [{
           "name": "question",
           "type": "string"
+        },{
+          "name": "owner",
+          "type": "account_name"
         },{
           "name": "options",
           "type": "string[]"
@@ -104,6 +116,9 @@
       "fields": [{
           "name": "id",
           "type": "poll_id"
+        },{
+          "name": "pollowner",
+          "type": "account_name"
         },{
           "name": "voter",
           "type": "account_name"
