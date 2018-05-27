@@ -65,3 +65,8 @@ Session.vim
 *~
 # Auto-generated tag files
 tags
+
+# Tests
+tests/nodeos/data
+tests/node_modules
+tests/.idea
