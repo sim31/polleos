@@ -3,6 +3,7 @@ project(polleos CXX)
 
 set(BOOST_INCLUDE_DIR $ENV{HOME}/opt/boost_1_66_0/include CACHE PATH "Path to boost instalation directory") 
 set(WASM_INSTALL_DIR $ENV{HOME}/opt/wasm CACHE PATH "Path to wasm compiler instalation directory")
+set(EOSIO_TOKEN_INCLUDE_DIR ./ CACHE PATH "Path to directory where eosio.token.hpp is")
 
 set(EOSIO_INSTALL_DIR /usr/local CACHE PATH "Path to eosio intstall dir")
 set(S2WASM_PATH ${EOSIO_INSTALL_DIR}/bin/eosio-s2wasm)
@@ -26,6 +27,7 @@ include_directories(${EOSIO_INSTALL_DIR}/include)
 include_directories(${EOSIO_INSTALL_DIR}/include/libc++/upstream/include)
 include_directories(${EOSIO_INSTALL_DIR}/include/musl/upstream/include)
 include_directories(${BOOST_INCLUDE_DIR})
+include_directories(${EOSIO_TOKEN_INCLUDE_DIR})
 
 set(CPP_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}.cpp)

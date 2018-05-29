@@ -42,7 +42,7 @@
       "base": "symbol_type",
       "fields": [{
           "name": "contract",
-          "type": "account_name"
+          "type": "name"
         }
       ]
     },{
@@ -76,7 +76,7 @@
           "type": "poll_id"
         },{
           "name": "pollowner",
-          "type": "account_name"
+          "type": "name"
         },{
           "name": "optionid",
           "type": "uint32"
@@ -90,7 +90,7 @@
           "type": "string"
         },{
           "name": "owner",
-          "type": "account_name"
+          "type": "name"
         },{
           "name": "options",
           "type": "string[]"
@@ -104,7 +104,7 @@
           "type": "string"
         },{
           "name": "owner",
-          "type": "account_name"
+          "type": "name"
         },{
           "name": "options",
           "type": "string[]"
@@ -121,10 +121,10 @@
           "type": "poll_id"
         },{
           "name": "pollowner",
-          "type": "account_name"
+          "type": "name"
         },{
           "name": "voter",
-          "type": "account_name"
+          "type": "name"
         },{
           "name": "option_id",
           "type": "uint32"

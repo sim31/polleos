@@ -8,7 +8,7 @@ class NodeosProcess {
     this.process = null;
   }
 
-  launch() {
+  launch(logerr = false, logstdout = false) {
     return new Promise( (resolve, reject) => {
       if (this.isRunning)
         reject("This process is already running");
@@ -16,10 +16,17 @@ class NodeosProcess {
       this.process = exec(this.cmd, (error, stdout, stderr) => {
         this.isRunning = false;
 
-        if (error)
+        if (error) {
           console.log("nodeos exited with error: ", error);
-        else
+        }
+        else {
           console.log("nodeos exited cleanly");
+        }
+
+        if (logerr)
+          console.log("stderr: ", stderr);
+        if (logstdout)
+          console.log("stdout: ", stdout);
       });
 
       this.isRunning = true;
@@ -30,7 +37,7 @@ class NodeosProcess {
         else
           resolve();
 
-      }, 1000)
+      }, 3000)
     })
   }
 

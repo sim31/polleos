@@ -1,7 +1,7 @@
 #pragma once
 
 #include <eosiolib/eosio.hpp>
-#include <eosiolib/currency.hpp>
+#include <eosio.token.hpp>
 #include <cmath>
 
 class polleos : public eosio::contract {
@@ -108,12 +108,6 @@ class polleos : public eosio::contract {
       void vote(poll_id id, account_name poll_owner, account_name voter,
                 uint32_t option_id);
 
-      static bool token_exists(token_info token) {
-
-         auto                   sym_name = token.name();
-         eosio::currency::stats st(token.contract, sym_name);
-         return st.find(sym_name) != st.end();
-      }
 
    private:
       void store_poll(const std::string& question, account_name owner,

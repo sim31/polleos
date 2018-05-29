@@ -55,17 +55,18 @@ void polleos::store_vote(const polleos::poll& p, polleos::poll_table& polls,
 void polleos::store_token_vote(const polleos::poll& p, polleos::poll_table& polls,
                                polleos::vote_table& votes, uint32_t option_id) {
 
-   eosio::currency::accounts accounts(p.token.contract, votes.get_scope());
-   eosio::currency::account  acc = accounts.get(p.token.name(),
-                                                "Voter has to be a stakeholder of a "
-                                                "token to participate in a token poll");
+   account_name voter = votes.get_scope();
 
-   eosio_assert(acc.balance.is_valid(), "Balance of voter account is invalid. Something"
+   eosio::token token(p.token.contract);
+   // Should fail if voter is not a stakeholder
+   eosio::asset balance = token.get_balance(voter, p.token.name());
+   // Some additional checks
+   eosio_assert(balance.is_valid(), "Balance of voter account is invalid. Something"
                                         " wrong with token contract.");
-   eosio_assert(acc.balance.amount > 0,
-                "Voter has to have more than 0 of tokens to participate in a poll");
+   eosio_assert(balance.amount > 0,
+                "Voter has to have more than 0 of tokens to participate in a poll!");
 
-   store_vote(p, polls, votes, option_id, to_weight(acc.balance));
+   store_vote(p, polls, votes, option_id, to_weight(balance));
 }
 
 void polleos::newpoll(const std::string& question, account_name owner,
@@ -75,10 +76,11 @@ void polleos::newpoll(const std::string& question, account_name owner,
 }
 
 void polleos::newtokenpoll(const std::string& question, account_name owner,
-                           const option_names& options, token_info token) {
+                           const option_names& options, token_info token_inf) {
 
-   eosio_assert(token_exists(token), "This token does not exist");
-   store_poll(question, owner, options, true, token);
+   eosio::token token(token_inf.contract);
+   eosio_assert(token.exists(token_inf.name()), "This token does not exist");
+   store_poll(question, owner, options, true, token_inf);
 }
 
 void polleos::vote(polleos::poll_id id, account_name poll_owner, account_name voter,
