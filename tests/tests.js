@@ -7,11 +7,7 @@ const Eos           = require('eosjs'),
       Account       = require('./Account');
 
 
-const addr           = "127.0.0.1:8889";
-//TODO: update for dawn4.2 and 1.0. --delete-all-blocks instead of resync
-const nodeosOpts     = "--config-dir=./nodeos/config --data-dir=./nodeos/data --resync-blockchain" +
-  " --http-server-address=" + addr;
-const nodeosProcess  = new NodeosProcess(nodeosOpts);
+const nodeosProcess  = new NodeosProcess();
 const contractDir    = "../build";
 const wastFile       = contractDir + "/polleos.wasm";
 const abiFile        = contractDir + "/polleos.abi";
@@ -27,20 +23,20 @@ describe("Polleos smart contract", function () {
     console.log("Nodeos launched");
 
     eos = Eos.Localnet( {
-      httpEndpoint: "http://" + addr,
+      httpEndpoint: nodeosProcess.getHttpEndpoint(),
       keyProvider: Account.getKeyProvider(),
-      binaryen
+      binaryen,
     });
 
     // console.log(Object.getOwnPropertyNames(eos));
 
-    Account.init("http://" + addr);
+    Account.init(nodeosProcess.getHttpEndpoint());
     polleos = await Account.generateAndCreateAcc(polleosAccName);
 
-    let wasm = fs.readFileSync(wastFile);
+    let wast = fs.readFileSync(wastFile);
     let abi  = fs.readFileSync(abiFile);
 
-    await eos.setcode(polleos.name, 0, 0, wasm)
+    await eos.setcode(polleos.name, 0, 0, wast)
     await eos.setabi(polleos.name, JSON.parse(abi))
 
     eos.contract(polleos.name).then(c => console.log(c));

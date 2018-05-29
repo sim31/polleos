@@ -1,9 +1,15 @@
 const exec = require('child_process').exec;
+const Eos  = require('eosjs');
+
+const addr           = "127.0.0.1:8898";
+const nodeosOpts     = "--config-dir=./nodeos/config --data-dir=./nodeos/data --delete-all-blocks" +
+  " --genesis-json=./nodeos/config/genesis.json --http-server-address=" + addr;
+const executable     = "nodeos";
 
 class NodeosProcess {
 
-  constructor(optionsStr, executable="nodeos") {
-    this.cmd    = executable + " " +  optionsStr;
+  constructor() {
+    this.cmd    = executable + " " +  nodeosOpts;
     this.isRunning = false;
     this.process = null;
   }
@@ -31,7 +37,7 @@ class NodeosProcess {
 
       this.isRunning = true;
 
-      setTimeout(() => {
+      setTimeout( () => {
         if (!this.isRunning)
           reject("nodeos failed to launch");
         else
@@ -39,6 +45,7 @@ class NodeosProcess {
 
       }, 3000)
     })
+
   }
 
   stop() {
@@ -54,6 +61,10 @@ class NodeosProcess {
       })
       this.process.kill();
     })
+  }
+
+  getHttpEndpoint() {
+    return "http://" + addr;
   }
 }
 
