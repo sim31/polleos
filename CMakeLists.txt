@@ -83,3 +83,6 @@ add_custom_target(abi-copy ALL
 add_custom_command(OUTPUT ${CONTRACT_ABI_FILE}
         COMMAND cp ${CONTRACT_ABI_SRC} ${CONTRACT_ABI_FILE}
         DEPENDS ${CONTRACT_ABI_SRC})
+
+
+#add_subdirectory(tests ${CMAKE_CURRENT_BUILD_DIR}/tests EXCLUDE_FROM_ALL)
