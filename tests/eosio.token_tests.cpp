@@ -1,3 +1,5 @@
+#define BOOST_TEST_DYN_LINK
+
 #include <boost/test/unit_test.hpp>
 #include <eosio/testing/tester.hpp>
 #include <eosio/chain/abi_serializer.hpp>
@@ -99,18 +101,18 @@ public:
 
 BOOST_AUTO_TEST_SUITE(eosio_token_tests)
 
-BOOST_FIXTURE_TEST_CASE( create_tests, eosio_token_tester ) try {
+BOOST_FIXTURE_TEST_CASE( create_tests, eosio_token_tester ) {
 
-   auto token = create( N(alice), asset::from_string("1000.000 TKN"));
+   auto token = create(N(alice), asset::from_string("1000.000 TKN"));
    auto stats = get_stats("3,TKN");
-   REQUIRE_MATCHING_OBJECT( stats, mvo()
+   REQUIRE_MATCHING_OBJECT(stats, mvo()
       ("supply", "0.000 TKN")
-      ("max_supply", "1000.000 TKN")
-      ("issuer", "alice")
+         ("max_supply", "1000.000 TKN")
+         ("issuer", "alice1")
    );
    produce_blocks(1);
+}
 
-} FC_LOG_AND_RETHROW()
 
 BOOST_FIXTURE_TEST_CASE( create_negative_max_supply, eosio_token_tester ) try {
 

@@ -78,6 +78,7 @@ add_custom_command(OUTPUT ${CONTRACT_WAST_FILE}
 #        ${CPP_FILES}
 #        DEPENDS ${CPP_FILES} ${HPP_FILES})
 
+# FIXME: use configure_file?
 add_custom_target(abi-copy ALL
         DEPENDS ${CONTRACT_ABI_FILE})
 add_custom_command(OUTPUT ${CONTRACT_ABI_FILE}

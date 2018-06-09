@@ -2,9 +2,12 @@
  *  @file
  *  @copyright defined in eos/LICENSE.txt
  */
+#define BOOST_TEST_MODULE polleos-tests
+#define BOOST_TEST_DYN_LINK
+#include <boost/test/unit_test.hpp>
+#include <boost/test/unit_test_monitor.hpp>
 #include <cstdlib>
 #include <iostream>
-#include <boost/test/included/unit_test.hpp>
 #include <fc/log/logger.hpp>
 #include <eosio/chain/exceptions.hpp>
 
@@ -15,31 +18,31 @@ void translate_fc_exception(const fc::exception &e) {
    BOOST_TEST_FAIL("Caught Unexpected Exception");
 }
 
-boost::unit_test::test_suite* init_unit_test_suite(int argc, char* argv[]) {
-   // Turn off blockchain logging if no --verbose parameter is not added
-   // To have verbose enabled, call "tests/chain_test -- --verbose"
-   bool is_verbose = false;
-   std::string verbose_arg = "--verbose";
-   for (int i = 0; i < argc; i++) {
-      if (verbose_arg == argv[i]) {
-         is_verbose = true;
-         break;
+struct eosio_test_fixture {
+   eosio_test_fixture() {
+      // Turn off blockchain logging if no --verbose parameter is not added
+      // To have verbose enabled, call "tests/chain_test -- --verbose"
+      bool is_verbose = false;
+      std::string verbose_arg = "--verbose";
+      int argc = boost::unit_test::framework::master_test_suite().argc;
+      char** argv = boost::unit_test::framework::master_test_suite().argv;
+      for (int i = 0; i < argc; i++) {
+         if (verbose_arg == argv[i]) {
+            is_verbose = true;
+            break;
+         }
       }
-   }
-   if(!is_verbose) fc::logger::get(DEFAULT_LOGGER).set_log_level(fc::log_level::off);
+      if(!is_verbose)
+         fc::logger::get(DEFAULT_LOGGER).set_log_level(fc::log_level::off);
 
-   // Register fc::exception translator
-   boost::unit_test::unit_test_monitor.register_exception_translator<fc::exception>(&translate_fc_exception);
+      // Register fc::exception translator
+      boost::unit_test::unit_test_monitor.register_exception_translator<fc::exception>
+         (&translate_fc_exception);
 
-   std::srand(time(NULL));
-   std::cout << "Random number generator seeded to " << time(NULL) << std::endl;
-   /*
-   const char* genesis_timestamp_str = getenv("EOS_TESTING_GENESIS_TIMESTAMP");
-   if( genesis_timestamp_str != nullptr )
-   {
-      EOS_TESTING_GENESIS_TIMESTAMP = std::stoul( genesis_timestamp_str );
+      std::srand(time(NULL));
+      std::cout << "Random number generator seeded to " << time(NULL) << std::endl;
    }
-   std::cout << "EOS_TESTING_GENESIS_TIMESTAMP is " << EOS_TESTING_GENESIS_TIMESTAMP << std::endl;
-   */
-   return nullptr;
-}
+};
+
+BOOST_TEST_GLOBAL_FIXTURE( eosio_test_fixture );
+
