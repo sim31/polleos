@@ -6,9 +6,6 @@
 #    list( APPEND PLATFORM_SPECIFIC_LIBS tcmalloc )
 #endif()
 
-cmake_minimum_required(VERSION 3.9)
-project("polleos-tests")
-
 set(EOSIO_SRC_DIR "" CACHE PATH "Path to eosio source directory")
 set(EOSIO_BUILD_DIR "" CACHE PATH "Path to eosio build directory")
 set(BOOST_INCLUDEDIR $ENV{HOME}/opt/boost_1_66_0/include CACHE PATH "Path to boost instalation directory")
@@ -119,10 +116,8 @@ find_package(Boost 1.67 REQUIRED COMPONENTS
 llvm_map_components_to_libnames(LLVM_LIBS support core passes mcjit native DebugInfoDWARF)
 link_directories(${LLVM_LIBRARY_DIR})
 
-set( CMAKE_CXX_STANDARD 14 )
-
-include_directories("${CMAKE_BINARY_DIR}../")  # For *.wast.hpp and *.abi.hpp
-include_directories("${CMAKE_SOURCE_DIR}/../")
+include_directories("${CMAKE_BINARY_DIR}")  # For *.wast.hpp and *.abi.hpp
+include_directories("${CMAKE_SOURCE_DIR}/")
 include_directories("${EOSIO_SRC_DIR}/libraries/testing/include")
 include_directories("${EOSIO_SRC_DIR}/libraries/chain/include/")
 include_directories("${EOSIO_SRC_DIR}/libraries/fc/include/")

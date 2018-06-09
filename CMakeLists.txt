@@ -56,19 +56,8 @@ add_wast_executable(TARGET ${CMAKE_PROJECT_NAME}
         SOURCE_FILES ${CPP_FILES})
 
 
-set(CONTRACT_ABI_FILE ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.abi)
 set(CONTRACT_ABI_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}.abi)
-
-# Currently we don't generate abi, because it does not recognize symbol types.
-# Instead we just copy our own .abi file from source into build dir
-#add_custom_target(abi
-#        DEPENDS ${CONTRACT_ABI_FILE})
-#add_custom_command(OUTPUT ${CONTRACT_ABI_FILE}
-#        COMMAND ${EOSIOCPP_PATH}
-#        -g ${CONTRACT_ABI_FILE}
-#        ${CPP_FILES}
-#        DEPENDS ${CPP_FILES} ${HPP_FILES})
 
 configure_file("${CONTRACT_ABI_SRC}" "${CMAKE_CURRENT_BINARY_DIR}" COPYONLY)
 
-#add_subdirectory(tests ${CMAKE_CURRENT_BUILD_DIR}/tests EXCLUDE_FROM_ALL)
+add_subdirectory(tests)

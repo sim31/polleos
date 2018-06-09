@@ -53,6 +53,7 @@ public:
 
    fc::variant get_stats( const string& symbolname )
    {
+
       auto symb = eosio::chain::symbol::from_string(symbolname);
       auto symbol_code = symb.to_symbol_code().value;
       vector<char> data = get_row_by_account( N(eosio.token), symbol_code, N(stat), symbol_code );
