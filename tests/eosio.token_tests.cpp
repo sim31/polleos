@@ -109,7 +109,7 @@ BOOST_FIXTURE_TEST_CASE( create_tests, eosio_token_tester ) {
    REQUIRE_MATCHING_OBJECT(stats, mvo()
       ("supply", "0.000 TKN")
          ("max_supply", "1000.000 TKN")
-         ("issuer", "alice1")
+         ("issuer", "alice")
    );
    produce_blocks(1);
 }

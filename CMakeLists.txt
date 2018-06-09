@@ -3,19 +3,7 @@ project(polleos CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
-find_package(Boost 1.67 REQUIRED COMPONENTS
-        thread
-        date_time
-        filesystem
-        system
-        program_options
-        signals
-        serialization
-        chrono
-        unit_test_framework
-        context
-        locale
-        iostreams)
+set(BOOST_INCLUDEDIR $ENV{HOME}/opt/boost_1_67_0/include CACHE PATH "Path to boost instalation directory")
 
 set(EOSIO_INSTALL_DIR /usr/local CACHE PATH "Path to eosio intstall dir")
 set(S2WASM_PATH ${EOSIO_INSTALL_DIR}/bin/eosio-s2wasm)
@@ -26,9 +14,9 @@ set(EOSIO_CONTRACTSDK_PATH ${EOSIO_INSTALL_DIR}/usr/share/eosio/contractsdk/lib)
 include("wasm")
 
 set(DEFAULT_SYSTEM_INCLUDE_FOLDERS ${EOSIO_INSTALL_DIR}/include/libc++/upstream/include
-        ${EOSIO_INSTALL_DIR}/include/musl/upstream/include ${Boost_INCLUDE_DIR})
+        ${EOSIO_INSTALL_DIR}/include/musl/upstream/include ${BOOST_INCLUDEDIR})
 set(EOSIO_LIBS ${EOSIO_CONTRACTSDK_PATH}/eosiolib.bc ${EOSIO_CONTRACTSDK_PATH}/libc++.bc
-        ${EOSIO_CONTRACTSDK_PATH}/libc.bc ${EOSIO_CONTRACTSDK_PATH}/eosiolib.bc)
+        ${EOSIO_CONTRACTSDK_PATH}/libc.bc)
 
 set(INCLUDE_DIRS "${EOSIO_INSTALL_DIR}/include" "${CMAKE_SOURCE_DIR}/include")
 

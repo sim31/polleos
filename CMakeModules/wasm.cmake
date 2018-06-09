@@ -124,8 +124,11 @@ macro(add_wast_executable)
   compile_wast(${ARGV})
 
   foreach(lib ${ARG_LIBRARIES})
-     list(APPEND LIBRARIES ${${lib}_BC_FILENAME})
+     list(APPEND LIBRARIES ${lib})
   endforeach()
+
+  message("${LIBRARIES}")
+
   add_custom_command(OUTPUT ${target}.bc
     DEPENDS ${outfiles} ${ARG_LIBRARIES} ${LIBRARIES}
     COMMAND ${WASM_LLVM_LINK} -only-needed -o ${target}.bc ${outfiles} ${LIBRARIES}
