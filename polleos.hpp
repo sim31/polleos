@@ -1,8 +1,8 @@
 #pragma once
 
 #include <eosiolib/eosio.hpp>
-#include <eosio.token.hpp>
 #include <cmath>
+#include "eosio.token.hpp"
 
 class polleos : public eosio::contract {
    public:
