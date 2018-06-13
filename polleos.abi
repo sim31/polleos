@@ -1,12 +1,12 @@
 {
   "types": [{
-      "new_type_name": "poll_id",
+      "new_type_name": "poll_id_t",
       "type": "uint64"
     },{
       "new_type_name": "option_results",
       "type": "option_result[]"
     },{
-      "new_type_name": "token_info",
+      "new_type_name": "token_info_t",
       "type": "extended_symbol"
     },{
       "new_type_name": "symbol_name",
@@ -50,7 +50,7 @@
       "base": "",
       "fields": [{
           "name": "id",
-          "type": "poll_id"
+          "type": "poll_id_t"
         },{
           "name": "question",
           "type": "string"
@@ -62,24 +62,18 @@
           "type": "bool"
         },{
           "name": "token",
-          "type": "token_info"
+          "type": "token_info_t"
         }
       ]
     },{
       "name": "poll_vote",
       "base": "",
       "fields": [{
-          "name": "voteid",
-          "type": "uint64"
-        },{
           "name": "pollid",
-          "type": "poll_id"
-        },{
-          "name": "pollowner",
-          "type": "name"
+          "type": "poll_id_t"
         },{
           "name": "optionid",
-          "type": "uint32"
+          "type": "uint8"
         }
       ]
     },{
@@ -89,7 +83,7 @@
           "name": "question",
           "type": "string"
         },{
-          "name": "owner",
+          "name": "creator",
           "type": "name"
         },{
           "name": "options",
@@ -103,14 +97,14 @@
           "name": "question",
           "type": "string"
         },{
-          "name": "owner",
+          "name": "creator",
           "type": "name"
         },{
           "name": "options",
           "type": "string[]"
         },{
           "name": "token",
-          "type": "token_info"
+          "type": "token_info_t"
         }
       ]
     },{
@@ -118,16 +112,13 @@
       "base": "",
       "fields": [{
           "name": "id",
-          "type": "poll_id"
-        },{
-          "name": "pollowner",
-          "type": "name"
+          "type": "poll_id_t"
         },{
           "name": "voter",
           "type": "name"
         },{
           "name": "option_id",
-          "type": "uint32"
+          "type": "uint8"
         }
       ]
     }
@@ -153,7 +144,7 @@
         "id"
       ],
       "key_types": [
-        "poll_id"
+        "poll_id_t"
       ],
       "type": "poll"
     },{
@@ -163,7 +154,7 @@
         "id"
       ],
       "key_types": [
-        "poll_id"
+        "poll_id_t"
       ],
       "type": "poll_vote"
     }
