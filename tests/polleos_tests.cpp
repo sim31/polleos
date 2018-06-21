@@ -62,14 +62,14 @@ class polleos_tester : public tester {
 
          return push_action( owner, N(newpoll), mvo()
             ( "question", question)
-            ( "owner", owner)
+            ( "creator", owner)
             ( "options", options )
          );
       }
 
-      fc::variant get_poll( poll_id id, account_name owner ) {
+      fc::variant get_poll( poll_id id ) {
 
-         auto data = get_row_by_account( contract_name, owner, N(poll), id);
+         auto data = get_row_by_account( contract_name, contract_name, N(poll), id);
          return data.empty() ? fc::variant() : abi_ser.binary_to_variant( "poll", data );
       }
 
@@ -86,15 +86,16 @@ BOOST_FIXTURE_TEST_CASE( create_poll, polleos_tester ) try {
 
    string question = "Q1";
    option_names options {"opt1", "opt2", "opt3"};
-   option_results results { mvo()("name", "opt1")("votes", 0.0),
-                            mvo()("name", "opt2")("votes", 0.0),
-                            mvo()("name", "opt3")("votes", 0.0) };
+   option_results results { mvo("name", "opt1")("votes", 0.0),
+                            mvo("name", "opt2")("votes", 0.0),
+                            mvo("name", "opt3")("votes", 0.0) };
 
 
    newpoll(question, N(alice), options);
    produce_blocks(1);
 
-   variant created_poll = get_poll(0, N(alice));
+   variant created_poll = get_poll(0);
+
    variant required_poll = mvo()
       ("question", question)
       ("results", results)
